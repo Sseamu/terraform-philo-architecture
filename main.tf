@@ -23,3 +23,27 @@ module "vpc" {
   source       = "./vpc"
   service_type = var.service_type
 }
+
+#S3 
+
+# module "s3" {
+#   source       = "./s3"
+#   service_type = var.service_type
+#   vpc_id       = module.vpc.vpc_id
+#   bucket       = "philoberry-s3-${var.service_type}"
+
+# }
+
+#rds
+# module "rds" {
+#   source              = "./rds"
+#   service_type        = var.service_type
+#   vpc_id              = module.vpc.vpc_id
+#   private_subnet1_id  = module.vpc.private_subnet1_id
+#   private_subnet2_id  = module.vpc.private_subnet2_id
+#   instance_class      = "db.t3.micro"
+#   username            = var.username
+#   rds_password        = var.rds_password
+#   publicly_accessible = false
+# }
+
