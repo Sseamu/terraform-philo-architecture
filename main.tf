@@ -89,14 +89,29 @@ module "ecs-service" {
 
 
 
-# #alb
+#alb
 
-# module "alb" {
-#   source       = "./alb"
-#   service_type = var.service_type
-#   vpc_id       = module.vpc.vpc_id
+module "alb" {
+  source             = "./alb"
+  service_type       = var.service_type
+  vpc_id             = module.vpc.vpc_id
+  alb_name           = "my-ecs-lb"
+  vpc_subnets        = [module.vpc.private_subnet1_id]
+  default_target_arn = module.ecs-service.target_group_arn
+  domain             = "*.philoberry.com"
+  internal           = false
+  subnet_ids         = [module.vpc.public_subnet1_id]
+  ecs_sg             = module.ecs-cluster.cluster_sg
+  certificate_arn    = var.certificate_arn
+}
 
+#alb-rule
 
-
-#   subnet_ids = [module.vpc.public_subnet1_id] //ECS 컨테이너에 로드밸런싱
+# module "alb-rule" {
+#   source =  "./alb-rule"
+#   listener_arn = module.alb.http_listener
+#   priority = 100
+#   target_group_arn = module.ecs-service.target_group_arn
+#   condition_field = "host-header"
+#   condition_values =["www.philoberry.com"]
 # }

@@ -1,8 +1,3 @@
-variable "alb_sg_port" {
-  type    = list(number)
-  default = [80, 443]
-}
-
 #default vpc
 variable "vpc_id" {
   type = string
@@ -19,8 +14,37 @@ variable "subnet_ids" {
 }
 
 #https 프로토콜 certication_arn
-variable "certicate_arn" {
+variable "certificate_arn" {
   description = "The Arn of the Certificate"
   type        = string
-  default     = ""
 }
+#########################
+variable "alb_name" {
+
+}
+
+variable "internal" {
+
+}
+
+variable "domain" {
+
+}
+
+variable "default_target_arn" {
+
+}
+
+variable "ecs_sg" {
+  default = ""
+}
+
+variable "vpc_subnets" {
+  type = set(string)
+}
+
+variable "port" {
+  type    = list(number)
+  default = [80, 443]
+}
+

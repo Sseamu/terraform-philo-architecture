@@ -21,7 +21,7 @@ variable "aws_region" {
   description = "my-region"
   default     = "ap-northeast-2"
 }
-variable "cerficate_arn" {
+variable "certificate_arn" {
   description = "The ARN of the certificate"
   type        = string
 }
