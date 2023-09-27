@@ -1,5 +1,6 @@
 variable "log_group" {
-
+  description = "The name of the CloudWatch log group"
+  type        = string
 }
 
 variable "cluster_name" {
@@ -7,7 +8,8 @@ variable "cluster_name" {
 }
 
 variable "aws_region" {
-
+  description = "The region in which to deploy the resources"
+  type        = string
 }
 
 variable "vpc_id" {
@@ -15,7 +17,8 @@ variable "vpc_id" {
 }
 
 variable "aws_account_id" {
-
+ description = "The AWS account ID"
+  type        = string
 }
 
 variable "service_type" {

@@ -17,7 +17,11 @@ variable "key_pair_name" {
   type        = string
 }
 
-variable "AWS_REGION" {
+variable "aws_region" {
   description = "my-region"
   default     = "ap-northeast-2"
+}
+variable "cerficate_arn" {
+  description = "The ARN of the certificate"
+  type        = string
 }

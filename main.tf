@@ -67,34 +67,36 @@ module "ecs-cluster" {
   ssh_sg         = aws_security_group.allow_ssh.id
   log_group      = "my-log-group"
   aws_account_id = data.aws_caller_identity.current.account_id
-  aws_region     = var.AWS_REGION
+  aws_region     = var.aws_region
 }
 
 module "ecs-service" {
-  source = "./ecs-service"
+  source              = "./ecs-service"
+  vpc_id              = module.vpc.vpc_id
+  application_name    = "philoberry-art-service"
+  application_port    = 80
+  application_version = "latest"
+  cluster_arn         = module.ecs-cluster.cluster_arn
+  service_role_arn    = module.ecs-cluster.service_role_arn
+  aws_region          = var.aws_region
+  cpu_reservation     = "256"
+  memory_reservation  = "128"
+  log_group           = "my-web-log-group"
+  desired_count       = 2
+  alb_arn             = module.ecs-service.target_group_arn // 아직 진행안했음.
 }
 
 
 
 
+# #alb
+
+# module "alb" {
+#   source       = "./alb"
+#   service_type = var.service_type
+#   vpc_id       = module.vpc.vpc_id
 
 
 
-
-
-
-
-
-
-
-#alb
-
-module "alb" {
-  source       = "./alb"
-  service_type = var.service_type
-  vpc_id       = module.vpc.vpc_id
-
-
-
-  subnet_ids = [module.vpc.public_subnet1_id] //ECS 컨테이너에 로드밸런싱
-}
+#   subnet_ids = [module.vpc.public_subnet1_id] //ECS 컨테이너에 로드밸런싱
+# }
