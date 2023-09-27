@@ -56,7 +56,7 @@ resource "aws_db_instance" "rds" {
   max_allocated_storage  = 100                                 //최대 스토리지 임계값
   publicly_accessible    = var.publicly_accessible             //퍼블릭액세스 가능
   vpc_security_group_ids = [aws_security_group.rds_sg.id]      //기본 VPC 보안 그룹  
-  availability_zone      = "ap-northeast-2b"                   //가용 영역
+  availability_zone      = "ap-northeast-2a"                   //가용 영역
   port                   = 3306                                //데이터베이스 포트
   skip_final_snapshot    = true
 
