@@ -107,11 +107,11 @@ module "alb" {
 
 #alb-rule
 
-# module "alb-rule" {
-#   source =  "./alb-rule"
-#   listener_arn = module.alb.http_listener
-#   priority = 100
-#   target_group_arn = module.ecs-service.target_group_arn
-#   condition_field = "host-header"
-#   condition_values =["www.philoberry.com"]
-# }
+module "alb-rule" {
+  source           = "./alb-rule"
+  listener_arn     = module.alb.http_listener_arn
+  priority         = 100
+  target_group_arn = module.ecs-service.target_group_arn
+  condition_field  = "host-header"
+  condition_values = ["www.philoberry.com"]
+}
