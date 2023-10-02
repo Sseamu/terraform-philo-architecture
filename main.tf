@@ -73,7 +73,7 @@ module "ecs-cluster" {
 module "ecs-service" {
   source              = "./ecs-service"
   vpc_id              = module.vpc.vpc_id
-  application_name    = "philoberry-art-service"
+  application_name    = "philoberry_repository2" // ecr_repository를 새로 생성하네? 
   application_port    = 80
   application_version = "latest"
   cluster_arn         = module.ecs-cluster.cluster_arn
@@ -96,7 +96,7 @@ module "alb" {
   service_type       = var.service_type
   vpc_id             = module.vpc.vpc_id
   alb_name           = "my-ecs-lb"
-  vpc_subnets        = [module.vpc.private_subnet1_id]
+  vpc_subnets        = [module.vpc.private_subnet1_id, module.vpc.private_subnet2_id]
   default_target_arn = module.ecs-service.target_group_arn
   domain             = "*.philoberry.com"
   internal           = false
