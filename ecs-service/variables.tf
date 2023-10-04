@@ -1,6 +1,9 @@
 variable "vpc_id" {
 
 }
+variable "service_type" {
+  type = string
+}
 
 
 variable "containers" {
@@ -57,13 +60,15 @@ variable "application_name" {
 variable "aws_region" {
 
 }
-variable "log_group" {
-  type = string
+
+variable "frontend_version" {
+  type        = string
+  description = "first fronted_version"
 }
 
-
-variable "application_version" {
-  type = string
+variable "nginx_version" {
+  type        = string
+  description = "nginx lastest version"
 }
 variable "application_port" {
   type = number
@@ -75,6 +80,22 @@ variable "cpu_reservation" {
 }
 variable "memory_reservation" {
 
+}
+variable "cpu_reservation_frontend" {
+
+}
+
+variable "memory_reservation_frontend" {
+
+}
+
+variable "log_group_frontend" {
+  type = string
+
+}
+variable "log_group_nginx" {
+
+  type = string
 }
 
 variable "task_role_arn" {

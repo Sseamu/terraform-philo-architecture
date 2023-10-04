@@ -1,15 +1,14 @@
-
 [
     {
-        "name": "${application_name}",
-        "image": "${ecr_url}:${application_version}",
+        "name": "${application_name}_nginx",
+        "image": "${ecr_url}:${nginx_version}",
         "cpu": ${cpu_reservation},
         "memoryReservation": ${memory_reservation},
         "essential": true,
         "mountPoints": [],
         "portMappings" : [
             {
-                "containerPort": ${application_port},
+                "containerPort": 80,
                 "hostPort": 0,
                 "protocol": "tcp"
             }
@@ -17,10 +16,33 @@
         "logConfiguration": {
             "logDriver": "awslogs",
             "options": {
-                "awslogs-group": "${log_group}",
+                "awslogs-group": "${log_group_nginx}",
                 "awslogs-region": "${aws_region}",
                 "awslogs-create-group": "true",
-                "awslogs-stream-prefix": "${application_name}"
+                "awslogs-stream-prefix": "${application_name}_nginx"
+            }
+         }
+    },
+    {
+     	"name": "${application_name}_frontend",
+     	"image": "${ecr_url}:${frontend_version}",
+     	"cpu": ${cpu_reservation_frontend},
+     	"memoryReservation": ${memory_reservation_frontend},
+     	"essential": true,
+     	"portMappings": [
+     		{
+                "containerPort": 443,
+                "hostPort": 0,
+                "protocol": "tcp"
+     		}
+         ],
+         "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-group": "${log_group_frontend}",
+                "awslogs-region": "${aws_region}",
+                "awslogs-create-group": "true",
+                "awslogs-stream-prefix": "${application_name}_frontend"
             }
          }
     }

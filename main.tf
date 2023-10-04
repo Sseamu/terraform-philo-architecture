@@ -71,19 +71,24 @@ module "ecs-cluster" {
 }
 
 module "ecs-service" {
-  source              = "./ecs-service"
-  vpc_id              = module.vpc.vpc_id
-  application_name    = "philoberry_repository2" // ecr_repository를 새로 생성하네? 
-  application_port    = 80
-  application_version = "latest"
-  cluster_arn         = module.ecs-cluster.cluster_arn
-  service_role_arn    = module.ecs-cluster.service_role_arn
-  aws_region          = var.aws_region
-  cpu_reservation     = "256"
-  memory_reservation  = "128"
-  log_group           = "my-web-log-group"
-  desired_count       = 2
-  alb_arn             = module.ecs-service.target_group_arn // 아직 진행안했음.
+  source                      = "./ecs-service"
+  vpc_id                      = module.vpc.vpc_id
+  application_name            = "philoberry-repository2" // ecr_repository를 새로 생성하네? 
+  application_port            = 443
+  nginx_version               = "ver-2"
+  frontend_version            = "ver-1"
+  cluster_arn                 = module.ecs-cluster.cluster_arn
+  service_role_arn            = module.ecs-cluster.service_role_arn
+  aws_region                  = var.aws_region
+  cpu_reservation             = 256
+  memory_reservation          = 128
+  desired_count               = 2
+  alb_arn                     = module.ecs-service.target_group_arn // 아직 진행안했음.
+  service_type                = var.service_type
+  cpu_reservation_frontend    = 256
+  memory_reservation_frontend = 512
+  log_group_nginx             = "/aws/ecs/nginx-log-group"
+  log_group_frontend          = "/aws/ecs/frontend-log-group"
 }
 
 

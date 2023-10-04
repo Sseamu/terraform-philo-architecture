@@ -19,14 +19,18 @@ data "aws_ecs_task_definition" "ecs-service" {
 # task definition template
 locals {
   ecs_service_content = templatefile("${path.module}/ecs-service.json", {
-    application_name    = var.application_name
-    application_port    = var.application_port
-    application_version = var.application_version
-    ecr_url             = aws_ecr_repository.ecs-service[0].repository_url
-    aws_region          = var.aws_region
-    cpu_reservation     = var.cpu_reservation
-    memory_reservation  = var.memory_reservation
-    log_group           = var.log_group
+    application_name            = var.application_name
+    application_port            = var.application_port
+    nginx_version               = var.nginx_version
+    frontend_version            = var.frontend_version
+    ecr_url                     = aws_ecr_repository.ecs-service[0].repository_url
+    aws_region                  = var.aws_region
+    cpu_reservation             = var.cpu_reservation
+    memory_reservation          = var.memory_reservation
+    cpu_reservation_frontend    = var.cpu_reservation_frontend
+    memory_reservation_frontend = var.memory_reservation_frontend
+    log_group_nginx             = var.log_group_nginx
+    log_group_frontend          = var.log_group_frontend
   })
 }
 
@@ -59,7 +63,7 @@ resource "aws_ecs_service" "ecs-service" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.ecs_service.id
-    container_name   = var.application_name
+    container_name   = "${var.application_name}_frontend" //fronted_loadbalaner
     container_port   = var.application_port
   }
 
