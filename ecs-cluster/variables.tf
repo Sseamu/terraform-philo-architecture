@@ -17,7 +17,7 @@ variable "vpc_id" {
 }
 
 variable "aws_account_id" {
- description = "The AWS account ID"
+  description = "The AWS account ID"
   type        = string
 }
 
@@ -39,7 +39,7 @@ variable "ecs_minsize" {
 }
 
 variable "ecs_maxsize" {
-  default = 1
+  default = 3
 }
 
 variable "ecs_desired_capacity" {

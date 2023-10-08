@@ -75,3 +75,6 @@ resource "null_resource" "alb_exists" {
     alb_name = var.alb_arn
   }
 }
+//null_resource.alb_exists 리소스는 주로 특정 조건이 충족될 때까지 
+//terraform 실행을 일시 중지하는 데 사용됩니다. 이 경우, ALB(Application Load Balancer)가
+// 완전히 생성되고 활성화될 때까지 ECS 서비스 생성을 지연하려는 의도

@@ -61,7 +61,7 @@ module "ecs-cluster" {
   cluster_name = "philoberry-ecs-cluster"
   # instance_type = "t2.small" //이전에는 module에 가능했는데 지금은 참조하는 곳에서 사용하면 안되는듯?
   ssh_key_name = var.key_pair_name
-  vpc_subnets  = [module.vpc.private_subnet1_id] // join(",", module.vpc.public_subnets) 이건 서브넷이 여러개일때 사용하기 적합 현재
+  vpc_subnets  = [module.vpc.private_subnet1_id, module.vpc.private_subnet2_id] // join(",", module.vpc.public_subnets) 이건 서브넷이 여러개일때 사용하기 적합 현재
   //내 아키텍쳐는 퍼블릭 서브넷이 1개이기 때문에 여러개는 불필요 
   enable_ssh     = true
   ssh_sg         = aws_security_group.allow_ssh.id
@@ -80,18 +80,19 @@ module "ecs-service" {
   cluster_arn                 = module.ecs-cluster.cluster_arn
   service_role_arn            = module.ecs-cluster.service_role_arn
   aws_region                  = var.aws_region
-  cpu_reservation             = 256
-  memory_reservation          = 128
+  cpu_reservation             = 2048
+  memory_reservation          = 5096
   desired_count               = 2
   alb_arn                     = module.ecs-service.target_group_arn // 아직 진행안했음.
   service_type                = var.service_type
-  cpu_reservation_frontend    = 256
-  memory_reservation_frontend = 512
-  log_group_nginx             = "/aws/ecs/nginx-log-group"
-  log_group_frontend          = "/aws/ecs/frontend-log-group"
+  cpu_reservation_frontend    = 5096
+  memory_reservation_frontend = 10192
+  log_group_nginx             = "/aws/ecs/philoberry-repository2/nginx-log-group"
+  log_group_frontend          = "/aws/ecs/philoberry-repository2/frontend-log-group"
 }
 
-
+//log driver use 
+//https://docs.aws.amazon.com/ko_kr/AmazonECS/latest/userguide/using_awslogs.html
 
 
 #alb

@@ -20,13 +20,17 @@ data "aws_ami" "ecs" {
 
 resource "aws_ecs_cluster" "cluster" {
   name = var.cluster_name
-}
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
+} // 애플리케이션 모니터링및 통계수집
 
 # launch config
 resource "aws_launch_configuration" "cluster" {
   name_prefix          = "ecs-${var.service_type}-launch_config"
   image_id             = data.aws_ami.ecs.id
-  instance_type        = "t3.small"
+  instance_type        = "c5.xlarge"
   key_name             = var.ssh_key_name //tfvars 에있음
   iam_instance_profile = aws_iam_instance_profile.cluster-ec2-role.id
   security_groups      = [aws_security_group.ecs-cluster-sg.id]
