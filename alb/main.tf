@@ -13,13 +13,6 @@ resource "aws_lb" "alb" {
   }
 }
 
-# # certificate
-# data "aws_acm_certificate" "certificate" {
-#   domain   = var.domain
-#   statuses = ["ISSUED", "PENDING_VALIDATION"]
-# }
-
-
 #리스너 및 라우팅  80번 포트 
 
 
@@ -30,8 +23,12 @@ resource "aws_lb_listener" "http_listener" {
 
 
   default_action {
-    type             = "forward"              //다음으로 전달
-    target_group_arn = var.default_target_arn //대상 그룹
+    type = "redirect" //다음으로 전달
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
   }
 }
 # https 프로토콜 
@@ -40,8 +37,7 @@ resource "aws_lb_listener" "https_listener" {
   port              = "443"          //포트
   protocol          = "HTTPS"        //프로토콜
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  # certificate_arn   = data.aws_acm_certificate.certificate.arn
-  certificate_arn = var.certificate_arn
+  certificate_arn   = var.certificate_arn
 
   default_action {
     type             = "forward"              //다음으로 전달

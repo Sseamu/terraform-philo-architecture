@@ -13,7 +13,7 @@ variable "subnet_ids" {
   type = list(any)
 }
 
-#https 프로토콜 certication_arn
+# https 프로토콜 certication_arn
 variable "certificate_arn" {
   description = "The Arn of the Certificate"
   type        = string

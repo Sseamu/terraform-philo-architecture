@@ -24,6 +24,15 @@ module "vpc" {
   service_type = var.service_type
 }
 
+#route53
+module "route53" {
+  source       = "./route53"
+  domain       = var.domain
+  zone_id      = module.alb.zone_id
+  alb_dns_name = module.alb.alb_dns_name
+}
+
+
 #S3 
 
 # module "s3" {
@@ -104,11 +113,11 @@ module "alb" {
   alb_name           = "my-ecs-lb"
   vpc_subnets        = [module.vpc.private_subnet1_id, module.vpc.private_subnet2_id]
   default_target_arn = module.ecs-service.target_group_arn
-  domain             = "*.philoberry.com"
+  domain             = var.domain
   internal           = false
   subnet_ids         = [module.vpc.public_subnet1_id]
   ecs_sg             = module.ecs-cluster.cluster_sg
-  certificate_arn    = var.certificate_arn
+  certificate_arn    = module.route53.acm_certificate_arn
 }
 
 #alb-rule
@@ -121,3 +130,4 @@ module "alb-rule" {
   condition_field  = "host-header"
   condition_values = ["www.philoberry.com"]
 }
+
