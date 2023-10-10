@@ -19,5 +19,8 @@ resource "aws_route53_record" "cert_validation" {
   zone_id = data.aws_route53_zone.front.zone_id
   records = [tolist(aws_acm_certificate.acm.domain_validation_options)[0].resource_record_value]
   ttl     = 60
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 //해당 도메인에 접근시  loadbalaner로 이동하도록 a레코드 설정

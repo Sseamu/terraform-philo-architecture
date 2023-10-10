@@ -64,15 +64,14 @@ data "aws_caller_identity" "current" {
 
 
 module "ecs-cluster" {
-  source       = "./ecs-cluster"
-  vpc_id       = module.vpc.vpc_id
-  service_type = var.service_type
-  cluster_name = "philoberry-ecs-cluster"
-  # instance_type = "t2.small" //이전에는 module에 가능했는데 지금은 참조하는 곳에서 사용하면 안되는듯?
-  ssh_key_name   = var.key_pair_name
+  source         = "./ecs-cluster"
+  vpc_id         = module.vpc.vpc_id
+  service_type   = var.service_type
+  cluster_name   = "philoberry-ecs-cluster"
   vpc_subnets    = module.vpc.private_subnets
   enable_ssh     = true
   ssh_sg         = aws_security_group.allow_ssh.id
+  ssh_key_name   = var.key_pair_name
   log_group      = "my-log-group"
   aws_account_id = data.aws_caller_identity.current.account_id
   aws_region     = "ap-northeast-2"

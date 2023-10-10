@@ -16,14 +16,22 @@ variable "aws_availablity_zones_count" {
   type = number
 }
 
-variable "container_port" {
-  type    = list(number)
-  default = [80, 443]
+variable "nginx_container_port" {
+  type    = number
+  default = 80
+}
+
+variable "frontend_container_port" {
+  type    = number
+  default = 443
 }
 
 variable "host_port" {
   type    = number
   default = 0
+}
+variable "ecs_cluster_name" {
+  type = string
 }
 
 variable "aws_ecr_repository" {

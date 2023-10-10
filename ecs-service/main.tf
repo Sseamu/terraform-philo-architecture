@@ -23,16 +23,17 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role" {
 }
 
 data "template_file" "service" {
-  template = file(var.tpl_path)
+  template = file("${path.module}/service.config.json.tpl")
 
   vars = {
-    region             = var.region
-    aws_ecr_repository = var.aws_ecr_repository
-    tag                = "latest"
-    container_port     = join(",", [for p in var.container_port : tostring(p)])
-    host_port          = var.host_port
-    application_name   = var.application_name
-    service_type       = var.service_type
+    region                  = var.region
+    aws_ecr_repository      = var.aws_ecr_repository
+    tag                     = "latest"
+    nginx_container_port    = var.nginx_container_port
+    frontend_container_port = var.frontend_container_port
+    host_port               = var.host_port
+    application_name        = var.application_name
+    service_type            = var.service_type
   }
 }
 
@@ -52,7 +53,7 @@ resource "aws_ecs_task_definition" "service" {
 }
 
 resource "aws_ecs_cluster" "staging" {
-  name = "service-ecs-cluster-${var.service_type}"
+  name = var.ecs_cluster_name
 }
 
 resource "aws_ecs_service" "staging" {
@@ -73,7 +74,7 @@ resource "aws_ecs_service" "staging" {
   load_balancer {
     target_group_arn = aws_lb_target_group.ecs_service.arn
     container_name   = var.application_name
-    container_port   = var.container_port[1] //front server port
+    container_port   = var.frontend_container_port
   }
 
   depends_on = [

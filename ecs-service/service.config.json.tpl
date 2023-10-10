@@ -13,8 +13,8 @@
     },
     "portMappings": [
       {
-        "containerPort": "${container_port}",
-        "hostPort": 0,
+        "containerPort": ${nginx_container_port},
+        "hostPort": ${host_port},
         "protocol": "tcp"
       }
     ],
@@ -28,7 +28,7 @@
     "environment": [
       {
         "name": "PORT",
-        "value": 80
+        "value": "80"
       }
     ],
     "ulimits": [
@@ -56,8 +56,8 @@
     },
     "portMappings": [
       {
-        "containerPort": "${container_port}",
-        "hostPort": 0,
+        "containerPort": ${frontend_container_port},
+        "hostPort": ${host_port},
         "protocol": "tcp"
       }
     ],
@@ -71,7 +71,7 @@
     "environment": [
       {
         "name": "PORT",
-        "value": 443
+        "value": "443"
       }
     ],
     "ulimits": [
