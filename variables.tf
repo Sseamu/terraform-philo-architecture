@@ -26,3 +26,9 @@ variable "aws_region" {
 variable "domain" {
   type = string
 }
+
+variable "service_type" {
+  type = string
+  default = ""
+  
+}
