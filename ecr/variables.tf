@@ -1,3 +1,3 @@
-variable "servic_type" {
+variable "service_type" {
   type = string
 }

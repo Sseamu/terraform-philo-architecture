@@ -21,6 +21,7 @@ variable "aws_account_id" {
   type        = string
 }
 
+
 variable "service_type" {
   type = string
 }

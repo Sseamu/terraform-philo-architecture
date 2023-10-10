@@ -21,6 +21,7 @@ provider "aws" {
 
 module "vpc" {
   source       = "./vpc"
+  az_count     = 2
   service_type = var.service_type
 }
 
@@ -43,13 +44,12 @@ module "route53" {
 
 # }
 
-#rds
+# rds
 # module "rds" {
 #   source              = "./rds"
 #   service_type        = var.service_type
 #   vpc_id              = module.vpc.vpc_id
-#   private_subnet1_id  = module.vpc.private_subnet1_id
-#   private_subnet2_id  = module.vpc.private_subnet2_id
+#   subnet_ids          = [module.vpc.private_subnets]
 #   instance_class      = "db.t3.micro"
 #   username            = var.username
 #   rds_password        = var.rds_password
@@ -69,35 +69,34 @@ module "ecs-cluster" {
   service_type = var.service_type
   cluster_name = "philoberry-ecs-cluster"
   # instance_type = "t2.small" //이전에는 module에 가능했는데 지금은 참조하는 곳에서 사용하면 안되는듯?
-  ssh_key_name = var.key_pair_name
-  vpc_subnets  = [module.vpc.private_subnet1_id, module.vpc.private_subnet2_id] // join(",", module.vpc.public_subnets) 이건 서브넷이 여러개일때 사용하기 적합 현재
-  //내 아키텍쳐는 퍼블릭 서브넷이 1개이기 때문에 여러개는 불필요 
+  ssh_key_name   = var.key_pair_name
+  vpc_subnets    = module.vpc.private_subnets
   enable_ssh     = true
   ssh_sg         = aws_security_group.allow_ssh.id
   log_group      = "my-log-group"
   aws_account_id = data.aws_caller_identity.current.account_id
-  aws_region     = var.aws_region
+  aws_region     = "ap-northeast-2"
 }
+
+module "ecr" {
+  source       = "./ecr"
+  service_type = var.service_type
+}
+
 
 module "ecs-service" {
   source                      = "./ecs-service"
   vpc_id                      = module.vpc.vpc_id
-  application_name            = "philoberry-repository2" // ecr_repository를 새로 생성하네? 
-  application_port            = 443
-  nginx_version               = "ver-2"
-  frontend_version            = "ver-1"
+  aws_private_subnets         = module.vpc.private_subnets
+  aws_ecr_repository          = module.ecr.aws_ecr_repository
   cluster_arn                 = module.ecs-cluster.cluster_arn
   service_role_arn            = module.ecs-cluster.service_role_arn
-  aws_region                  = var.aws_region
-  cpu_reservation             = 2048
-  memory_reservation          = 5096
-  desired_count               = 2
-  alb_arn                     = module.ecs-service.target_group_arn // 아직 진행안했음.
   service_type                = var.service_type
-  cpu_reservation_frontend    = 5096
-  memory_reservation_frontend = 10192
-  log_group_nginx             = "/aws/ecs/philoberry-repository2/nginx-log-group"
-  log_group_frontend          = "/aws/ecs/philoberry-repository2/frontend-log-group"
+  tpl_path                    = var.tpl_path
+  aws_availablity_zones_count = module.vpc.aws_availability_zone_available
+  ecs_task_sg                 = module.ecs-cluster.ecs_task_sg
+  http_listener               = module.alb.http_listener
+  https_listener              = module.alb.https_listener
 }
 
 //log driver use 
@@ -111,11 +110,11 @@ module "alb" {
   service_type       = var.service_type
   vpc_id             = module.vpc.vpc_id
   alb_name           = "my-ecs-lb"
-  vpc_subnets        = [module.vpc.private_subnet1_id, module.vpc.private_subnet2_id]
+  vpc_subnets        = module.vpc.private_subnets
   default_target_arn = module.ecs-service.target_group_arn
   domain             = var.domain
   internal           = false
-  subnet_ids         = [module.vpc.public_subnet1_id]
+  subnet_ids         = module.vpc.public_subnets
   ecs_sg             = module.ecs-cluster.cluster_sg
   certificate_arn    = module.route53.acm_certificate_arn
 }

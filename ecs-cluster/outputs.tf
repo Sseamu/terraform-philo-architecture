@@ -9,3 +9,6 @@ output "service_role_arn" {
 output "cluster_sg" {
   value = aws_security_group.ecs-cluster-sg.id
 }
+output "ecs_task_sg" {
+  value = [aws_security_group.ecs_task.id]
+}

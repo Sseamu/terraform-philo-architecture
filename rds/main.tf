@@ -32,7 +32,7 @@ resource "aws_security_group" "rds_sg" {
 ## private subnet 2 에 해당하는 부분
 resource "aws_db_subnet_group" "subnet-group" {
   name       = "philoberry-private-subnet-group-${var.service_type}"
-  subnet_ids = [var.private_subnet2_id, var.private_subnet1_id]
+  subnet_ids = var.private_subnets
 
   tags = {
     Name    = "philoberry-private-subnet-group-${var.service_type}"

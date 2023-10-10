@@ -19,3 +19,10 @@ output "https_listener_arn" {
   value = aws_lb_listener.https_listener.arn
 }
 
+output "http_listener" {
+  value = aws_lb_listener.http_listener
+}
+
+output "https_listener" {
+  value = aws_lb_listener.https_listener
+}

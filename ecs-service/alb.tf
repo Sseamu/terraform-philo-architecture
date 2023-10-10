@@ -1,5 +1,5 @@
 resource "aws_lb_target_group" "ecs_service" {
-  name = "${substr(var.application_name, 0, 10)}-${substr(md5("${var.application_port}${var.deregistration_delay}${var.healthcheck_matcher}"), 0, 12)}"
+  name = "${substr(var.application_name, 0, 10)}-${var.service_type}"
 
   port                 = 80
   protocol             = "HTTP"

@@ -1,132 +1,114 @@
 # vpc 설정
-resource "aws_vpc" "vpc" {
+resource "aws_vpc" "cluster_vpc" {
   cidr_block           = "172.18.0.0/16"
   instance_tenancy     = "default" ## 테넌시-기본값
   enable_dns_hostnames = true
 
   tags = {
-    Name    = "philoberry-vpc-${var.service_type}"
+    Name    = "philoberry-cluster_vpc-${var.service_type}"
     Service = "philoberry-{var.service_type}"
   }
 }
 
+data "aws_availability_zones" "available" {
+
+} // 작성이유: 특정지역내의 가용영역 검색을 위해 사용 동적으로 가져와 다른리소스에 사용됨
 
 
-# 퍼블릭 서브넷1
+# 퍼블릭 서브넷
 
-resource "aws_subnet" "public-subnet-1" {
-  vpc_id                  = aws_vpc.vpc.id    // VPC ID
-  cidr_block              = "172.18.0.0/24"   //CIDR block
-  availability_zone       = "ap-northeast-2a" //가용영역
+resource "aws_subnet" "public_subnet" {
+  count                   = var.az_count
+  vpc_id                  = aws_vpc.cluster_vpc.id
+  cidr_block              = cidrsubnet(aws_vpc.cluster_vpc.cidr_block, 8, var.az_count + count.index)
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = true
+
   tags = {
-    Name    = "philoberry-public-subnet-1-${var.service_type}"
-    Service = "philoberry-{var.servic_type}"
+    Name = "ecs-public-subnet-${var.service_type}"
   }
 }
 
 
-# 프라이빗 서브넷1
-resource "aws_subnet" "private-subnet-1" {
-  vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "172.18.1.0/24"
-  availability_zone = "ap-northeast-2a"
+# 프라이빗 서브넷
+resource "aws_subnet" "private_subnet" {
+  count             = var.az_count
+  vpc_id            = aws_vpc.cluster_vpc.id
+  cidr_block        = cidrsubnet(aws_vpc.cluster_vpc.cidr_block, 8, count.index)
+  availability_zone = element(data.aws_availability_zones.available.names, count.index)
+
   tags = {
-    Name    = "philoberry-private-subnet-1-${var.service_type}"
-    Service = "philoberry-${var.service_type}"
-  }
-}
-# 프라이빗 서브넷2
-resource "aws_subnet" "private-subnet-2" {
-  vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "172.18.2.0/24"
-  availability_zone = "ap-northeast-2b"
-  tags = {
-    Name    = "philoberry-private-subnet-2-${var.service_type}"
-    Service = "philoberry-${var.service_type}"
+    name = "ecs-private-subnet-${var.service_type}"
   }
 }
 
+#internetgateway
+resource "aws_internet_gateway" "cluster_igw" {
+  vpc_id = aws_vpc.cluster_vpc.id
 
-
-#Internet Gateway
-
-resource "aws_internet_gateway" "igw" {
-  vpc_id = aws_vpc.vpc.id // 현재 사용가능한 vpc
   tags = {
-    Name    = "philoberry-igw-${var.service_type}"
-    Service = "philoberry-${var.service_type}"
+    Name = "ecs-igw-${var.service_type}"
   }
 }
 
-# EIP 할당
-resource "aws_eip" "eip_1" {
-  #   vpc = true ==> 예전버전에 사용하던 방식
-  domain = "vpc"
+resource "aws_route" "internet_access" {
+  route_table_id         = aws_vpc.cluster_vpc.main_route_table_id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.cluster_igw.id
+}
+
+resource "aws_eip" "nat_gateway" {
+  count      = var.az_count
+  domain     = "vpc"
+  depends_on = [aws_internet_gateway.cluster_igw]
+}
+
+resource "aws_nat_gateway" "nat_gateway" {
+  count         = var.az_count
+  subnet_id     = element(aws_subnet.public_subnet.*.id, count.index)
+  allocation_id = element(aws_eip.nat_gateway.*.id, count.index)
+
   tags = {
-    Name    = "philoberry-natgw-eip_1-${var.service_type}"
-    Service = "philoberry-${var.service_type}"
+    Name = "NAT gw ${var.service_type}"
   }
 }
 
-
-# NAT gateway
-resource "aws_nat_gateway" "natgw_1" {
-  allocation_id = aws_eip.eip_1.id              //탄력적 IP 할당 ID
-  subnet_id     = aws_subnet.public-subnet-1.id //퍼블릭 서브넷 1
-
-  tags = {
-    Name    = "philoberry-natgw-public1-${var.service_type}"
-    Service = "philoberry-${var.service_type}"
-  }
-}
-
-
-# 퍼블릭 라우팅 테이블 연동 
-resource "aws_route_table" "public-rt" {
-  vpc_id = aws_vpc.vpc.id
+resource "aws_route_table" "private_route" {
+  count  = var.az_count
+  vpc_id = aws_vpc.cluster_vpc.id
 
   route {
-    cidr_block = "0.0.0.0/0"                 //Destination (대상)
-    gateway_id = aws_internet_gateway.igw.id //Target (대상)
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = element(aws_nat_gateway.nat_gateway.*.id, count.index)
   }
 
   tags = {
-    Name    = "philoberry-public-rt-${var.service_type}" //라우팅 테이블 이름
-    Service = "philoberry-${var.service_type}"
+    Name = "private-route-table-${var.service_type}"
   }
 }
 
-#프라이빗 라우팅 테이블 연동
-resource "aws_route_table" "private-rt" {
-  vpc_id = aws_vpc.vpc.id
+resource "aws_route_table" "public_route" {
+  vpc_id = aws_vpc.cluster_vpc.id
 
   route {
-    cidr_block = "0.0.0.0/0"                //Destination (대상)
-    gateway_id = aws_nat_gateway.natgw_1.id //Target (대상)
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.cluster_igw.id
   }
 
   tags = {
-    Name    = "philoberry-private-rt-${var.service_type}"
-    Service = "philoberry-${var.service_type}"
+    Name = "ecs-route-table-${var.service_type}"
   }
 }
 
-#퍼블릭 라우팅 테이블에 퍼블릭 서브넷1 연결
 
-resource "aws_route_table_association" "public-rt-association-1" {
-  subnet_id      = aws_subnet.public-subnet-1.id
-  route_table_id = aws_route_table.public-rt.id
+resource "aws_route_table_association" "to-public" {
+  count          = length(aws_subnet.public_subnet)
+  subnet_id      = element(aws_subnet.public_subnet.*.id, count.index)
+  route_table_id = element(aws_route_table.public_route.*.id, count.index)
 }
 
-#프라이빗 라이팅 테이블에 프라이빗 서브넷 1 연결
-resource "aws_route_table_association" "private-rt-association-1" {
-  subnet_id      = aws_subnet.private-subnet-1.id
-  route_table_id = aws_route_table.private-rt.id
-}
-
-#프라이빗 라이팅 테이블에 프라이빗 서브넷 2 연결
-resource "aws_route_table_association" "private-rt-association-2" {
-  subnet_id      = aws_subnet.private-subnet-2.id
-  route_table_id = aws_route_table.private-rt.id
+resource "aws_route_table_association" "to-private" {
+  count          = length(aws_subnet.private_subnet)
+  subnet_id      = element(aws_subnet.private_subnet.*.id, count.index)
+  route_table_id = element(aws_route_table.private_route.*.id, count.index)
 }

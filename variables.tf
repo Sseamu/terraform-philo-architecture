@@ -17,18 +17,12 @@ variable "key_pair_name" {
   type        = string
 }
 
-variable "aws_region" {
-  description = "my-region"
-  default     = "ap-northeast-2"
-}
-
 
 variable "domain" {
   type = string
 }
 
-variable "service_type" {
+
+variable "tpl_path" {
   type = string
-  default = ""
-  
 }

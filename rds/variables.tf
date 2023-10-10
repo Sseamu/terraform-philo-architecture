@@ -3,12 +3,9 @@ variable "vpc_id" {
   type = string
 }
 
-
-# 프라이빗 서브넷3
-variable "private_subnet2_id" {
-  type = string
+variable "private_subnets" {
+  type = list(any)
 }
-
 
 # 서비스 타입
 variable "service_type" {
@@ -37,8 +34,4 @@ variable "publicly_accessible" {
   type = bool
 }
 
-variable "private_subnet1_id" {
-  description = "ID of the private subnet 1"
-  type        = string
-}
 
