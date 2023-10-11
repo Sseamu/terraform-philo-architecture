@@ -25,13 +25,17 @@ variable "frontend_container_port" {
   type    = number
   default = 443
 }
-
-variable "host_port" {
+variable "nginx_host_port" {
   type    = number
   default = 0
 }
-variable "ecs_cluster_name" {
-  type = string
+variable "frontend_host_port" {
+  type    = number
+  default = 0
+}
+variable "cluster_name" {
+  type    = string
+  default = "philoberry-ecs-cluster"
 }
 
 variable "aws_ecr_repository" {
@@ -74,4 +78,18 @@ variable "https_listener" {
 
 variable "http_listener" {
 
+}
+
+variable "scaling_max_capacity" {
+  type    = number
+  default = 3
+}
+variable "scaling_min_capacity" {
+  type    = number
+  default = 1
+}
+
+variable "cpu_or_memory_limit" {
+  type    = number
+  default = 70
 }

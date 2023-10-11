@@ -31,7 +31,6 @@ data "template_file" "service" {
     tag                     = "latest"
     nginx_container_port    = var.nginx_container_port
     frontend_container_port = var.frontend_container_port
-    host_port               = var.host_port
     application_name        = var.application_name
     service_type            = var.service_type
   }
@@ -52,13 +51,9 @@ resource "aws_ecs_task_definition" "service" {
   }
 }
 
-resource "aws_ecs_cluster" "staging" {
-  name = var.ecs_cluster_name
-}
-
 resource "aws_ecs_service" "staging" {
   name                 = "staging"
-  cluster              = aws_ecs_cluster.staging.id
+  cluster              = var.cluster_arn //이내용을 main에있는 aws_Ecs_service에 모듈로 보내라
   task_definition      = aws_ecs_task_definition.service.arn
   desired_count        = var.aws_availablity_zones_count
   force_new_deployment = true
@@ -73,7 +68,7 @@ resource "aws_ecs_service" "staging" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.ecs_service.arn
-    container_name   = var.application_name
+    container_name   = "${var.application_name}_frontend"
     container_port   = var.frontend_container_port
   }
 
@@ -85,7 +80,7 @@ resource "aws_ecs_service" "staging" {
 
   tags = {
     Environment = "staging"
-    Application = var.application_name
+    Application = "${var.application_name}_frontend"
   }
 }
 

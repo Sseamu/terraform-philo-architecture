@@ -26,3 +26,11 @@ variable "domain" {
 variable "tpl_path" {
   type = string
 }
+
+variable "account_id" {
+  type = string
+}
+
+variable "elb_account_id" {
+  type = string
+}

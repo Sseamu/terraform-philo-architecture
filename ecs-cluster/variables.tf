@@ -65,3 +65,18 @@ variable "log_retention_days" {
   type        = number
   default     = 1
 }
+
+variable "scaling_max_capacity" {
+  type    = number
+  default = 3
+}
+variable "scaling_min_capacity" {
+  type    = number
+  default = 1
+}
+
+variable "cpu_or_memory_limit" {
+  type    = number
+  default = 70
+}
+

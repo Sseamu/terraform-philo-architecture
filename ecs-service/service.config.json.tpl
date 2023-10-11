@@ -14,7 +14,6 @@
     "portMappings": [
       {
         "containerPort": ${nginx_container_port},
-        "hostPort": ${host_port},
         "protocol": "tcp"
       }
     ],
@@ -57,7 +56,6 @@
     "portMappings": [
       {
         "containerPort": ${frontend_container_port},
-        "hostPort": ${host_port},
         "protocol": "tcp"
       }
     ],
