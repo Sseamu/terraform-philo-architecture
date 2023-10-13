@@ -33,6 +33,16 @@ module "route53" {
   alb_dns_name = module.alb.alb_dns_name
 }
 
+#logs 
+
+module "logs" {
+  source         = "./logs"
+  service_type   = var.service_type
+  bucket_logs    = "ecs-access-logs-philoberry-${var.service_type}"
+  elb_account_id = var.elb_account_id
+  account_id     = var.account_id
+}
+
 
 #S3 
 
@@ -87,7 +97,8 @@ module "ecs-service" {
   source                      = "./ecs-service"
   vpc_id                      = module.vpc.vpc_id
   aws_private_subnets         = module.vpc.private_subnets
-  aws_ecr_repository          = module.ecr.aws_ecr_repository
+  aws_ecr_front_repository    = module.ecr.aws_ecr_front_repository
+  aws_ecr_nginx_repository    = module.ecr.aws_ecr_nginx_repository
   cluster_arn                 = module.ecs-cluster.cluster_arn
   service_role_arn            = module.ecs-cluster.service_role_arn
   service_type                = var.service_type

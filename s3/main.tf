@@ -41,12 +41,17 @@ resource "aws_s3_bucket_policy" "bucket-policy" {
       "Sid": "Stmt1694490506867",
       "Action": [
         "s3:GetObject",
-        "s3:PutObject"
+        "s3:PutObject",
+        "s3:DeleteObject"
       ],
       "Effect": "Allow",
       "Resource": ["${aws_s3_bucket.philoberry-s3.arn}/*"],
       "Principal": {
-        "AWS": ["arn:aws:iam::666897452748:user/hansom-server"]
+        "AWS": ["arn:aws:iam::666897452748:user/hansom-server",
+                "arn:aws:iam::666897452748:root",
+                "arn:aws:iam::666897452748:junhyeok-front",
+                "arn:aws:iam::666897452748:root"
+               ]
       }
     },
     {
@@ -55,21 +60,34 @@ resource "aws_s3_bucket_policy" "bucket-policy" {
       "Effect": "Allow",
       "Resource": ["${aws_s3_bucket.philoberry-s3.arn}"],
       "Principal": {
-        "AWS": ["arn:aws:iam::666897452748:user/hansom-server"]
+        "AWS": ["arn:aws:iam::666897452748:user/hansom-server",
+                "arn:aws:iam::666897452748:root",
+                "arn:aws:iam::666897452748:junhyeok-front"
+               ]
       }
+    },
+    {
+      "Sid": "rds_all_permission",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "rds.amazonaws.com"
+      },
+      "Action": "s3:GetObject",
+      "Resource": ["${aws_s3_bucket.philoberry-s3.arn}/*"]
     }
   ]
 }
 POLICY
 }
 
+
 //s3 Cors 세팅(임시로 모든 호스트연결)
 resource "aws_s3_bucket_cors_configuration" "philoberry-s3" {
   bucket = aws_s3_bucket.philoberry-s3.id
   cors_rule {
     allowed_methods = ["GET", "PUT", "POST"]
-    allowed_origins = ["*"]
-    expose_headers  = []
+    allowed_origins = ["https://philoberry.com"]
+    expose_headers  = ["*"]
     max_age_seconds = 3000
   }
 

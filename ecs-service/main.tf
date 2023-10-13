@@ -27,7 +27,8 @@ data "template_file" "service" {
 
   vars = {
     region                  = var.region
-    aws_ecr_repository      = var.aws_ecr_repository
+    aws_front_repository    = var.aws_ecr_front_repository
+    aws_nginx_repository    = var.aws_ecr_nginx_repository
     tag                     = "latest"
     nginx_container_port    = var.nginx_container_port
     frontend_container_port = var.frontend_container_port

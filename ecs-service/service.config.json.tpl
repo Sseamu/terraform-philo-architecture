@@ -1,7 +1,7 @@
 [
   {
     "name": "${application_name}_nginx",
-    "image": "${aws_ecr_repository}:${tag}",
+    "image": "${aws_nginx_repository}:${tag}",
     "essential": true,
     "logConfiguration": {
       "logDriver": "awslogs",
@@ -43,7 +43,7 @@
   },
   {
     "name": "${application_name}_frontend",
-    "image": "${aws_ecr_repository}:${tag}",
+    "image": "${aws_front_repository}:${tag}",
     "essential": true,
     "logConfiguration": {
       "logDriver": "awslogs",

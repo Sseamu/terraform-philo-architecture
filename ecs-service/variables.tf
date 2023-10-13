@@ -38,7 +38,10 @@ variable "cluster_name" {
   default = "philoberry-ecs-cluster"
 }
 
-variable "aws_ecr_repository" {
+variable "aws_ecr_front_repository" {
+  type = string
+}
+variable "aws_ecr_nginx_repository" {
   type = string
 }
 

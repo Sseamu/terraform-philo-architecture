@@ -1,6 +1,19 @@
 resource "aws_s3_bucket" "log_storage" {
-  bucket        = "ecs-access-logs-philoberry-${var.service_type}"
-  force_destroy = true
+  bucket = var.bucket_logs
+
+  tags = {
+    Name    = "philoberry-log_stroages-${var.service_type}"
+    Service = "philoberry-log_stroages-${var.service_type}"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "log_storage_public-access" {
+  bucket = aws_s3_bucket.log_storage.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 resource "aws_cloudwatch_log_group" "service" {
@@ -12,10 +25,6 @@ resource "aws_cloudwatch_log_group" "service" {
   }
 }
 
-resource "aws_s3_bucket_acl" "lb-logs-acl" {
-  bucket = aws_s3_bucket.log_storage.id
-  acl    = "private"
-}
 
 data "aws_iam_policy_document" "allow-lb" {
   statement {
@@ -56,7 +65,7 @@ data "aws_iam_policy_document" "allow-lb" {
       variable = "s3:x-amz-acl"
 
       values = [
-        "bucket-owner-full-control"
+        "bucket-owner-full-cSontrol"
       ]
     }
   }
