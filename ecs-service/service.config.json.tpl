@@ -38,7 +38,7 @@
       }
     ],
     "mountPoints": [],
-    "memory": 512,
+    "memory": 1024,
     "volumesFrom": []
   },
   {
@@ -60,16 +60,16 @@
       }
     ],
     "healthCheck":{
-      "command":["CMD-SHELL","curl -f http://localhost:443 || exit 1"],
+      "command":["CMD-SHELL","curl -f http://localhost:3000 || exit 1"],
       "interval" :30,
       "timeout" :5,
       "retries" :3
     },
-    "cpu": 2,
+    "cpu": 3,
     "environment": [
       {
         "name": "PORT",
-        "value": "443"
+        "value": "3000"
       }
     ],
     "ulimits": [
@@ -80,7 +80,7 @@
       }
     ],
     "mountPoints": [],
-    "memory": 2048,
+    "memory": 4096,
     "volumesFrom": []
   }
 ]

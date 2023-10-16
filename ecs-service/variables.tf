@@ -23,7 +23,7 @@ variable "nginx_container_port" {
 
 variable "frontend_container_port" {
   type    = number
-  default = 443
+  default = 3000
 }
 variable "nginx_host_port" {
   type    = number

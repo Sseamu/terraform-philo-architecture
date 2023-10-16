@@ -42,7 +42,7 @@ resource "aws_ecs_task_definition" "service" {
   network_mode             = "awsvpc"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   cpu                      = 1024
-  memory                   = 2048
+  memory                   = 4096
   requires_compatibilities = ["FARGATE"]
   container_definitions    = data.template_file.service.rendered
 
@@ -72,6 +72,8 @@ resource "aws_ecs_service" "staging" {
     container_name   = "${var.application_name}_frontend"
     container_port   = var.frontend_container_port
   }
+  health_check_grace_period_seconds = 300
+
 
   depends_on = [
     var.http_listener,
