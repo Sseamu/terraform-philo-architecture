@@ -72,14 +72,10 @@
         "value": "3000"
       }
     ],
-    "ulimits": [
-      {
-        "name": "nofile",
-        "softLimit": 65536,
-        "hardLimit": 65536
-      }
-    ],
-    "mountPoints": [],
+    "mountPoints" : [ {
+      "sourceVolume": "philoberry_home",
+      "containerPath": "/jenkins_philoberry_home"
+    }],
     "memory": 4096,
     "volumesFrom": []
   }

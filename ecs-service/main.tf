@@ -41,10 +41,24 @@ resource "aws_ecs_task_definition" "service" {
   family                   = "service-staging-${var.service_type}"
   network_mode             = "awsvpc"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = var.jenkins_ecs_task_role_arn
   cpu                      = 1024
   memory                   = 4096
   requires_compatibilities = ["FARGATE"]
-  container_definitions    = data.template_file.service.rendered
+  volume {
+    name = "philoberry_home"
+    efs_volume_configuration {
+      file_system_id     = var.jenkins_efs_id
+      root_directory     = "/"
+      transit_encryption = "ENABLED"
+      authorization_config {
+        access_point_id = var.jenkins_efs_access_point_id
+        iam             = "ENABLED"
+      }
+    }
+  }
+  container_definitions = data.template_file.service.rendered
+
 
   tags = {
     Environment = "staging"
@@ -64,7 +78,7 @@ resource "aws_ecs_service" "staging" {
     # security_groups  = [aws_security_group.ecs_tasks.id]
     security_groups  = var.ecs_task_sg
     subnets          = var.aws_private_subnets
-    assign_public_ip = true
+    assign_public_ip = true //직접적으로 액세스 거부 
   }
 
   load_balancer {

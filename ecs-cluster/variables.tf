@@ -40,7 +40,7 @@ variable "ecs_minsize" {
 }
 
 variable "ecs_maxsize" {
-  default = 3
+  default = 4
 }
 
 variable "ecs_desired_capacity" {
@@ -64,19 +64,5 @@ variable "log_retention_days" {
   description = "Number of days to retain log events"
   type        = number
   default     = 1
-}
-
-variable "scaling_max_capacity" {
-  type    = number
-  default = 3
-}
-variable "scaling_min_capacity" {
-  type    = number
-  default = 1
-}
-
-variable "cpu_or_memory_limit" {
-  type    = number
-  default = 70
 }
 

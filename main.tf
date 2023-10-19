@@ -66,6 +66,13 @@ module "logs" {
 #   publicly_accessible = false
 # }
 
+module "efs" {
+  source               = "./efs"
+  aws_private_subnets  = module.vpc.private_subnets
+  philoberry_efs_sg_id = module.efs.philoberry_efs_sg
+  vpc_id               = module.vpc.vpc_id
+}
+
 
 data "aws_caller_identity" "current" {
 
@@ -107,6 +114,9 @@ module "ecs-service" {
   ecs_task_sg                 = module.ecs-cluster.ecs_task_sg
   http_listener               = module.alb.http_listener
   https_listener              = module.alb.https_listener
+  jenkins_ecs_task_role_arn   = module.ecs-service.ecs_task_role_arn
+  jenkins_efs_id              = module.efs.efs_id
+  jenkins_efs_access_point_id = module.efs.efs_access_point_id
 }
 
 //log driver use 

@@ -96,3 +96,14 @@ variable "cpu_or_memory_limit" {
   type    = number
   default = 70
 }
+
+variable "jenkins_efs_id" {
+  type = string
+}
+
+variable "jenkins_efs_access_point_id" {
+  type = string
+}
+variable "jenkins_ecs_task_role_arn" {
+  type = string
+}
