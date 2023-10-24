@@ -107,3 +107,7 @@ variable "jenkins_efs_access_point_id" {
 variable "jenkins_ecs_task_role_arn" {
   type = string
 }
+
+variable "philoberry_discovery_service_arn" {
+  type = string
+}

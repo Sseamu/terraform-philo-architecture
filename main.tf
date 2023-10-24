@@ -33,6 +33,14 @@ module "route53" {
   alb_dns_name = module.alb.alb_dns_name
 }
 
+#cloudmap
+
+module "cloudmap" {
+  source = "./cloudmap"
+  vpc_id = module.vpc.vpc_id
+}
+
+
 #logs 
 
 module "logs" {
@@ -101,22 +109,23 @@ module "ecr" {
 
 
 module "ecs-service" {
-  source                      = "./ecs-service"
-  vpc_id                      = module.vpc.vpc_id
-  aws_private_subnets         = module.vpc.private_subnets
-  aws_ecr_front_repository    = module.ecr.aws_ecr_front_repository
-  aws_ecr_nginx_repository    = module.ecr.aws_ecr_nginx_repository
-  cluster_arn                 = module.ecs-cluster.cluster_arn
-  service_role_arn            = module.ecs-cluster.service_role_arn
-  service_type                = var.service_type
-  tpl_path                    = var.tpl_path
-  aws_availablity_zones_count = module.vpc.aws_availability_zone_available
-  ecs_task_sg                 = module.ecs-cluster.ecs_task_sg
-  http_listener               = module.alb.http_listener
-  https_listener              = module.alb.https_listener
-  jenkins_ecs_task_role_arn   = module.ecs-service.ecs_task_role_arn
-  jenkins_efs_id              = module.efs.efs_id
-  jenkins_efs_access_point_id = module.efs.efs_access_point_id
+  source                           = "./ecs-service"
+  vpc_id                           = module.vpc.vpc_id
+  aws_private_subnets              = module.vpc.private_subnets
+  aws_ecr_front_repository         = module.ecr.aws_ecr_front_repository
+  aws_ecr_nginx_repository         = module.ecr.aws_ecr_nginx_repository
+  cluster_arn                      = module.ecs-cluster.cluster_arn
+  service_role_arn                 = module.ecs-cluster.service_role_arn
+  service_type                     = var.service_type
+  tpl_path                         = var.tpl_path
+  aws_availablity_zones_count      = module.vpc.aws_availability_zone_available
+  ecs_task_sg                      = module.ecs-cluster.ecs_task_sg
+  http_listener                    = module.alb.http_listener
+  https_listener                   = module.alb.https_listener
+  jenkins_ecs_task_role_arn        = module.ecs-service.ecs_task_role_arn
+  jenkins_efs_id                   = module.efs.efs_id
+  jenkins_efs_access_point_id      = module.efs.efs_access_point_id
+  philoberry_discovery_service_arn = module.cloudmap.philoberry_discovery_service_arn
 }
 
 //log driver use 
@@ -126,17 +135,17 @@ module "ecs-service" {
 #alb
 
 module "alb" {
-  source             = "./alb"
-  service_type       = var.service_type
-  vpc_id             = module.vpc.vpc_id
-  alb_name           = "my-ecs-lb"
-  vpc_subnets        = module.vpc.private_subnets
-  default_target_arn = module.ecs-service.target_group_arn
-  domain             = var.domain
-  internal           = false
-  subnet_ids         = module.vpc.public_subnets
-  ecs_sg             = module.ecs-cluster.cluster_sg
-  certificate_arn    = module.route53.acm_certificate_arn
+  source           = "./alb"
+  service_type     = var.service_type
+  vpc_id           = module.vpc.vpc_id
+  alb_name         = "my-ecs-lb"
+  vpc_subnets      = module.vpc.public_subnets // private_subnets => public_subnets 수정 10.24
+  target_group_arn = module.ecs-service.target_group_arn
+  domain           = var.domain
+  internal         = false
+  subnet_ids       = module.vpc.public_subnets
+  ecs_sg           = module.ecs-cluster.cluster_sg
+  certificate_arn  = module.route53.acm_certificate_arn
 }
 
 #alb-rule
@@ -147,6 +156,5 @@ module "alb-rule" {
   priority         = 100
   target_group_arn = module.ecs-service.target_group_arn
   condition_field  = "host-header"
-  condition_values = ["www.philoberry.com"]
 }
 

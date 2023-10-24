@@ -33,15 +33,15 @@ resource "aws_lb_listener" "http_listener" {
 }
 # https 프로토콜 
 resource "aws_lb_listener" "https_listener" {
-  load_balancer_arn = aws_lb.alb.arn //로드밸런서
+  load_balancer_arn = aws_lb.alb.arn //로드밸런서 
   port              = "443"          //포트
   protocol          = "HTTPS"        //프로토콜
   ssl_policy        = "ELBSecurityPolicy-2016-08"
   certificate_arn   = var.certificate_arn
 
   default_action {
-    type             = "forward"              //다음으로 전달
-    target_group_arn = var.default_target_arn //대상 그룹
+    type             = "forward"            //다음으로 전달
+    target_group_arn = var.target_group_arn //대상 그룹
   }
 }
 

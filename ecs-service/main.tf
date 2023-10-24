@@ -34,6 +34,7 @@ data "template_file" "service" {
     frontend_container_port = var.frontend_container_port
     application_name        = var.application_name
     service_type            = var.service_type
+    registry_arn            = var.philoberry_discovery_service_arn
   }
 }
 
@@ -87,6 +88,7 @@ resource "aws_ecs_service" "staging" {
     container_port   = var.frontend_container_port
   }
   health_check_grace_period_seconds = 300
+  //서비스 시작후 일정시간동안 health_check생략
 
 
   depends_on = [
@@ -94,10 +96,13 @@ resource "aws_ecs_service" "staging" {
     var.https_listener,
     aws_iam_role_policy_attachment.ecs_task_execution_role,
   ]
+  service_registries {
+    registry_arn = var.philoberry_discovery_service_arn
+  }
 
   tags = {
     Environment = "staging"
-    Application = "${var.application_name}_frontend"
+    Application = "${var.application_name}_nginx"
   }
 }
 

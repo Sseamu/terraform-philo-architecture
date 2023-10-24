@@ -1,5 +1,8 @@
 resource "aws_efs_file_system" "philberryt-efs" {
   creation_token = "my-philobery_efs"
+  lifecycle_policy {
+    transition_to_ia = "AFTER_30_DAYS"
+  }
 
   tags = {
     Name = "my-philobery_efs"
@@ -36,11 +39,3 @@ resource "aws_efs_access_point" "philoberry" {
     Name = "jenkins-philoberry EFS Access Point"
   }
 } //EFS 파일 시스템에 접근할 수 있는 access 포인트
-
-resource "aws_efs_file_system" "philoberry_with_lifecyle_policy" {
-  creation_token = "my-philobery_efs_with_lifecycle_policy"
-
-  lifecycle_policy {
-    transition_to_ia = "AFTER_30_DAYS"
-  }
-}

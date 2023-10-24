@@ -31,12 +31,12 @@ variable "domain" {
 
 }
 
-variable "default_target_arn" {
+variable "target_group_arn" {
 
 }
 
 variable "ecs_sg" {
-  default = ""
+
 }
 
 variable "vpc_subnets" {

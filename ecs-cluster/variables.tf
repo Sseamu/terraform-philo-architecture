@@ -66,3 +66,7 @@ variable "log_retention_days" {
   default     = 1
 }
 
+variable "port" {
+  type    = list(number)
+  default = [80, 3000]
+}

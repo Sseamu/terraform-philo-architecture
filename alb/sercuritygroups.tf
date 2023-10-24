@@ -22,6 +22,8 @@ resource "aws_security_group" "alb" {
 }
 
 resource "aws_security_group_rule" "cluster-allow-alb" {
+  # count                    = length(var.ecs_sg)
+  # security_group_id        = element(var.ecs_sg, count.index)
   security_group_id        = var.ecs_sg
   type                     = "ingress"
   from_port                = 32768
@@ -29,3 +31,4 @@ resource "aws_security_group_rule" "cluster-allow-alb" {
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.alb.id
 }
+

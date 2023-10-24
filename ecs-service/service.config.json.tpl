@@ -23,18 +23,16 @@
       "timeout" :5,
       "retries" :3
     },
+    "serviceRegistries": [
+      {
+        "registryArn": "${registry_arn}"
+      }
+    ],
     "cpu": 1,
     "environment": [
       {
         "name": "PORT",
         "value": "80"
-      }
-    ],
-    "ulimits": [
-      {
-        "name": "nofile",
-        "softLimit": 65536,
-        "hardLimit": 65536
       }
     ],
     "mountPoints": [],

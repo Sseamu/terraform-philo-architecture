@@ -5,3 +5,4 @@ output "ecs_task_role_arn" {
   value       = aws_iam_role.jenkins_ecs_task.arn
   description = "Value of jenkins ecs task role arn"
 }
+

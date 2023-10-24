@@ -26,12 +26,16 @@ resource "aws_security_group_rule" "cluster-egress" {
 resource "aws_security_group" "ecs_task" {
   vpc_id = var.vpc_id
   name   = "ecs-task-sg-${var.service_type}"
-  ingress {
-    from_port   = 80
-    protocol    = "tcp"
-    to_port     = 80
-    cidr_blocks = ["0.0.0.0/0"]
+  dynamic "ingress" {
+    for_each = var.port
+    content {
+      from_port   = ingress.value
+      protocol    = "tcp"
+      to_port     = ingress.value
+      cidr_blocks = ["0.0.0.0/0"]
+    }
   }
+
   egress {
     from_port   = 0
     protocol    = "-1"
