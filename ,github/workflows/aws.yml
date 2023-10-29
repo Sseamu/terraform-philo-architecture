@@ -9,7 +9,7 @@ env:
 	ECS_CLUSTER: philoberry-ecs-cluster
 	CONTAINER_NAME: philoberry-repository_frontend
 	ECS_SERVICE: staging
-	ECS_TD: ../ecs-service/config.json.tpl
+	ECS_TD: ../ecs-service/service.config.json.tpl
 jobs:
   deploy:
     name: Deploy
