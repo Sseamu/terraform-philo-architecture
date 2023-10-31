@@ -70,3 +70,8 @@ variable "port" {
   type    = list(number)
   default = [80, 3000]
 }
+
+variable "express_port" {
+  type    = number
+  default = 8000
+}

@@ -25,6 +25,11 @@ variable "frontend_container_port" {
   type    = number
   default = 3000
 }
+
+variable "express_container_port" {
+  type    = number
+  default = 8000
+}
 variable "nginx_host_port" {
   type    = number
   default = 0
@@ -42,6 +47,10 @@ variable "aws_ecr_front_repository" {
   type = string
 }
 variable "aws_ecr_nginx_repository" {
+  type = string
+}
+
+variable "aws_ecr_express_repository" {
   type = string
 }
 
@@ -111,3 +120,4 @@ variable "jenkins_ecs_task_role_arn" {
 variable "philoberry_discovery_service_arn" {
   type = string
 }
+

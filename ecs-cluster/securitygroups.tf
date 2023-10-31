@@ -4,6 +4,14 @@ resource "aws_security_group" "ecs-cluster-sg" {
   description = var.cluster_name
 }
 
+resource "aws_security_group_rule" "cluster-egress" {
+  security_group_id = aws_security_group.ecs-cluster-sg.id
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+}
 resource "aws_security_group_rule" "cluster-allow-ssh" {
   count                    = var.enable_ssh ? 1 : 0
   security_group_id        = aws_security_group.ecs-cluster-sg.id
@@ -14,14 +22,6 @@ resource "aws_security_group_rule" "cluster-allow-ssh" {
   source_security_group_id = var.ssh_sg
 }
 
-resource "aws_security_group_rule" "cluster-egress" {
-  security_group_id = aws_security_group.ecs-cluster-sg.id
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
-}
 
 resource "aws_security_group" "ecs_task" {
   vpc_id = var.vpc_id
@@ -30,8 +30,8 @@ resource "aws_security_group" "ecs_task" {
     for_each = var.port
     content {
       from_port   = ingress.value
-      protocol    = "tcp"
       to_port     = ingress.value
+      protocol    = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
     }
   }
@@ -43,4 +43,23 @@ resource "aws_security_group" "ecs_task" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+}
+
+resource "aws_security_group" "express_sg" {
+  vpc_id = var.vpc_id
+  name   = "express-sg"
+
+  ingress {
+    from_port       = var.express_port # Express 애플리케이션의 포트
+    to_port         = var.express_port
+    protocol        = "tcp"
+    security_groups = [aws_security_group.ecs_task.id] # ecs_task 보안 그룹 ID
+  }
+
+  egress {
+    from_port   = 0
+    protocol    = "-1"
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }

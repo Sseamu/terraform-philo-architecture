@@ -29,9 +29,11 @@ data "template_file" "service" {
     region                  = var.region
     aws_front_repository    = var.aws_ecr_front_repository
     aws_nginx_repository    = var.aws_ecr_nginx_repository
+    aws_express_repository  = var.aws_ecr_express_repository
     tag                     = "latest"
     nginx_container_port    = var.nginx_container_port
     frontend_container_port = var.frontend_container_port
+    express_container_port  = var.express_container_port
     application_name        = var.application_name
     service_type            = var.service_type
     registry_arn            = var.philoberry_discovery_service_arn

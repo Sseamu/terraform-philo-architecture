@@ -63,16 +63,17 @@ module "logs" {
 # }
 
 # rds
-# module "rds" {
-#   source              = "./rds"
-#   service_type        = var.service_type
-#   vpc_id              = module.vpc.vpc_id
-#   subnet_ids          = [module.vpc.private_subnets]
-#   instance_class      = "db.t3.micro"
-#   username            = var.username
-#   rds_password        = var.rds_password
-#   publicly_accessible = false
-# }
+module "rds" {
+  source              = "./rds"
+  service_type        = var.service_type
+  vpc_id              = module.vpc.vpc_id
+  private_subnets     = module.vpc.private_subnets
+  instance_class      = "db.t3.micro"
+  username            = var.username
+  rds_password        = var.rds_password
+  publicly_accessible = false
+  express_sg          = module.ecs-cluster.express_sg
+}
 
 module "efs" {
   source               = "./efs"
@@ -114,6 +115,7 @@ module "ecs-service" {
   aws_private_subnets              = module.vpc.private_subnets
   aws_ecr_front_repository         = module.ecr.aws_ecr_front_repository
   aws_ecr_nginx_repository         = module.ecr.aws_ecr_nginx_repository
+  aws_ecr_express_repository       = module.ecr.aws_ecr_express_repository
   cluster_arn                      = module.ecs-cluster.cluster_arn
   service_role_arn                 = module.ecs-cluster.service_role_arn
   service_type                     = var.service_type
@@ -135,17 +137,18 @@ module "ecs-service" {
 #alb
 
 module "alb" {
-  source           = "./alb"
-  service_type     = var.service_type
-  vpc_id           = module.vpc.vpc_id
-  alb_name         = "my-ecs-lb"
-  vpc_subnets      = module.vpc.public_subnets // private_subnets => public_subnets 수정 10.24
-  target_group_arn = module.ecs-service.target_group_arn
-  domain           = var.domain
-  internal         = false
-  subnet_ids       = module.vpc.public_subnets
-  ecs_sg           = module.ecs-cluster.cluster_sg
-  certificate_arn  = module.route53.acm_certificate_arn
+  source                   = "./alb"
+  service_type             = var.service_type
+  vpc_id                   = module.vpc.vpc_id
+  alb_name                 = "my-ecs-lb"
+  vpc_subnets              = module.vpc.public_subnets // private_subnets => public_subnets 수정 10.24
+  target_group_arn         = module.ecs-service.target_group_arn
+  express_target_group_arn = module.ecs-service.express_target_group_arn
+  domain                   = var.domain
+  internal                 = false
+  subnet_ids               = module.vpc.public_subnets
+  ecs_sg                   = module.ecs-cluster.cluster_sg
+  certificate_arn          = module.route53.acm_certificate_arn
 }
 
 #alb-rule

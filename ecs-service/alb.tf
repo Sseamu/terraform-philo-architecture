@@ -25,3 +25,29 @@ resource "aws_lb_target_group" "ecs_service" {
     Service = "philoberry-${var.service_type}"
   }
 }
+resource "aws_lb_target_group" "express_service" {
+  name = "${substr(var.application_name, 0, 10)}-express"
+
+  port                 = 8000
+  protocol             = "HTTP"
+  target_type          = "ip"
+  vpc_id               = var.vpc_id
+  deregistration_delay = var.deregistration_delay
+
+  health_check {
+    enabled  = true
+    path     = "/"
+    protocol = "HTTP"
+
+    healthy_threshold   = 3
+    unhealthy_threshold = 2
+    timeout             = 60
+    interval            = 120
+    matcher             = "200"
+  }
+
+  tags = {
+    Name    = "philoberry-tg-express"
+    Service = "philoberry-express"
+  }
+}

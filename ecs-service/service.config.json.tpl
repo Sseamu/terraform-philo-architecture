@@ -8,7 +8,7 @@
       "options": {
         "awslogs-region": "${region}",
         "awslogs-stream-prefix": "staging-service",
-        "awslogs-group": "awslogs-service-staging-${service_type}"
+        "awslogs-group": "awslogs-staging-${service_type}-nginx"
       }
     },
     "portMappings": [
@@ -48,7 +48,7 @@
       "options": {
         "awslogs-region": "${region}",
         "awslogs-stream-prefix": "staging-service",
-        "awslogs-group": "awslogs-service-staging-${service_type}"
+        "awslogs-group": "awslogs-staging-${service_type}-frontend"
       }
     },
     "portMappings": [
@@ -75,6 +75,41 @@
       "containerPath": "/jenkins_philoberry_home"
     }],
     "memory": 4096,
+    "volumesFrom": []
+  },
+  {
+    "name": "${application_name}_express",
+    "image": "${aws_express_repository}:${tag}",
+    "essential": true,
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-region": "${region}",
+        "awslogs-stream-prefix": "staging-service",
+        "awslogs-group": "awslogs-staging-${service_type}-express"
+      }
+    },
+    "portMappings": [
+      {
+        "containerPort": ${express_container_port},
+        "protocol": "tcp"
+      }
+    ],
+    "healthCheck":{
+      "command":["CMD-SHELL","curl -f http://localhost:${express_container_port} || exit 1"],
+      "interval" :30,
+      "timeout" :5,
+      "retries" :3
+    },
+    "cpu": 1,
+    "environment": [
+      {
+        "name": "PORT",
+        "value": "${express_container_port}"
+      }
+    ],
+    "mountPoints": [],
+    "memory": 1024,
     "volumesFrom": []
   }
 ]

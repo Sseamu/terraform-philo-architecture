@@ -12,3 +12,6 @@ output "cluster_sg" {
 output "ecs_task_sg" {
   value = [aws_security_group.ecs_task.id]
 }
+output "express_sg" {
+  value = aws_security_group.express_sg.id
+}
