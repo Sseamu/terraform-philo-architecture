@@ -22,7 +22,7 @@ resource "aws_security_group" "alb" {
 }
 
 resource "aws_security_group_rule" "cluster-allow-alb" {
-  security_group_id        = var.ecs_sg
+  security_group_id        = var.ecs_sg ##ecs-cluster-sg
   type                     = "ingress"
   from_port                = 32768
   to_port                  = 61000

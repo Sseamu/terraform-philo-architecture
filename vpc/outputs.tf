@@ -9,17 +9,9 @@ output "public_subnets" {
 output "private_subnets" {
   value = aws_subnet.private_subnet.*.id
 }
+# output "aws_availability_zone_available" {
+#   value = length(data.aws_availability_zones.available.names)
+# } 실제로 사용할 값 
 output "aws_availability_zone_available" {
-  value = length(data.aws_availability_zones.available.names)
-}
-# output "public_subnet1_id" {
-#   value = aws_subnet.public-subnet-1.id
-# }
-
-# output "private_subnet1_id" {
-#   value = aws_subnet.private-subnet-1.id
-# }
-
-# output "private_subnet2_id" {
-#   value = aws_subnet.private-subnet-2.id
-# }
+  value = max(0, length(data.aws_availability_zones.available.names) - 2)
+} // 임시 빌드중 task 개수 줄이기위해

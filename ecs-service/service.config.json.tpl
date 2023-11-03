@@ -8,7 +8,7 @@
       "options": {
         "awslogs-region": "${region}",
         "awslogs-stream-prefix": "staging-service",
-        "awslogs-group": "awslogs-staging-${service_type}-nginx"
+        "awslogs-group": "awslogs-service-staging-${service_type}"
       }
     },
     "portMappings": [
@@ -48,7 +48,7 @@
       "options": {
         "awslogs-region": "${region}",
         "awslogs-stream-prefix": "staging-service",
-        "awslogs-group": "awslogs-staging-${service_type}-frontend"
+        "awslogs-group": "awslogs-service-staging-${service_type}"
       }
     },
     "portMappings": [
@@ -63,7 +63,7 @@
       "timeout" :5,
       "retries" :3
     },
-    "cpu": 3,
+    "cpu": 2,
     "environment": [
       {
         "name": "PORT",
@@ -86,7 +86,7 @@
       "options": {
         "awslogs-region": "${region}",
         "awslogs-stream-prefix": "staging-service",
-        "awslogs-group": "awslogs-staging-${service_type}-express"
+        "awslogs-group": "awslogs-service-staging-${service_type}"
       }
     },
     "portMappings": [
@@ -96,7 +96,7 @@
       }
     ],
     "healthCheck":{
-      "command":["CMD-SHELL","curl -f http://localhost:${express_container_port} || exit 1"],
+      "command":["CMD-SHELL","curl -f http://localhost:8000/healthcheck || exit 1"],
       "interval" :30,
       "timeout" :5,
       "retries" :3
@@ -105,11 +105,11 @@
     "environment": [
       {
         "name": "PORT",
-        "value": "${express_container_port}"
+        "value": "8000"
       }
     ],
     "mountPoints": [],
-    "memory": 1024,
+    "memory": 2048,
     "volumesFrom": []
   }
 ]

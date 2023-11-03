@@ -26,3 +26,7 @@ output "http_listener" {
 output "https_listener" {
   value = aws_lb_listener.https_listener
 }
+
+output "alb_sg_id" {
+  value = aws_security_group.alb.id
+}

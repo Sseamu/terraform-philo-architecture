@@ -45,3 +45,37 @@ resource "aws_lb_listener" "https_listener" {
   }
 }
 
+#express 리스너 (alb(nextjs 요청) => express에 들어오도록)
+## api 요청
+resource "aws_lb_listener_rule" "express_api_listener" {
+  listener_arn = aws_lb_listener.https_listener.arn
+  priority     = 100
+
+  action {
+    type             = "forward"
+    target_group_arn = var.express_target_group_arn #aws_lb_target_group.express_service.arn 
+  }
+
+  condition {
+    path_pattern {
+      values = ["/api/*"]
+    }
+  }
+}
+##route 요청
+
+resource "aws_lb_listener_rule" "express_route_listener" {
+  listener_arn = aws_lb_listener.https_listener.arn
+  priority     = 101
+
+  action {
+    type             = "forward"
+    target_group_arn = var.express_target_group_arn #aws_lb_target_group.express_service.arn 
+  }
+
+  condition {
+    path_pattern {
+      values = ["/routes/*"]
+    }
+  }
+}

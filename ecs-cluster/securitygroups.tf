@@ -53,7 +53,7 @@ resource "aws_security_group" "express_sg" {
     from_port       = var.express_port # Express 애플리케이션의 포트
     to_port         = var.express_port
     protocol        = "tcp"
-    security_groups = [aws_security_group.ecs_task.id] # ecs_task 보안 그룹 ID
+    security_groups = [var.alb_sg]
   }
 
   egress {

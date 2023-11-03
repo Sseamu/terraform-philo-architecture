@@ -36,7 +36,7 @@ resource "aws_lb_target_group" "express_service" {
 
   health_check {
     enabled  = true
-    path     = "/"
+    path     = "/healthcheck"
     protocol = "HTTP"
 
     healthy_threshold   = 3

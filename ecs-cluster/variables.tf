@@ -68,10 +68,14 @@ variable "log_retention_days" {
 
 variable "port" {
   type    = list(number)
-  default = [80, 3000]
+  default = [80, 3000, 8000]
 }
 
 variable "express_port" {
   type    = number
   default = 8000
+}
+
+variable "alb_sg" {
+  
 }

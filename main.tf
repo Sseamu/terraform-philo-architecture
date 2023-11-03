@@ -101,6 +101,7 @@ module "ecs-cluster" {
   log_group      = "my-log-group"
   aws_account_id = data.aws_caller_identity.current.account_id
   aws_region     = "ap-northeast-2"
+  alb_sg         = module.alb.alb_sg_id
 }
 
 module "ecr" {
