@@ -25,6 +25,12 @@ module "vpc" {
   service_type = var.service_type
 }
 
+module "ec2" {
+  source          = "./ec2"
+  vpc_main_subnet = module.vpc.private_subnets[0]
+  vpc_id          = module.vpc.vpc_id
+}
+
 #route53
 module "route53" {
   source       = "./route53"
@@ -71,8 +77,9 @@ module "rds" {
   instance_class      = "db.t3.micro"
   username            = var.username
   rds_password        = var.rds_password
-  publicly_accessible = false
+  publicly_accessible = true //default false => rds fixedcase true
   express_sg          = module.ecs-cluster.express_sg
+  bastion_sg          = module.ec2.bastion_sg
 }
 
 module "efs" {
@@ -95,8 +102,6 @@ module "ecs-cluster" {
   service_type   = var.service_type
   cluster_name   = "philoberry-ecs-cluster"
   vpc_subnets    = module.vpc.private_subnets
-  enable_ssh     = true
-  ssh_sg         = aws_security_group.allow_ssh.id
   ssh_key_name   = var.key_pair_name
   log_group      = "my-log-group"
   aws_account_id = data.aws_caller_identity.current.account_id

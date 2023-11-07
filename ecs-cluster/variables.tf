@@ -48,17 +48,19 @@ variable "ecs_desired_capacity" {
 }
 
 
-variable "enable_ssh" {
+# variable "enable_ssh" {
 
-}
+# }
 
+
+
+# variable "ssh_sg" {
+#   default = ""
+# }
 variable "ssh_key_name" {
 
 }
 
-variable "ssh_sg" {
-  default = ""
-}
 
 variable "log_retention_days" {
   description = "Number of days to retain log events"
@@ -77,5 +79,5 @@ variable "express_port" {
 }
 
 variable "alb_sg" {
-  
+
 }

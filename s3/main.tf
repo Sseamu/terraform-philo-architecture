@@ -5,6 +5,9 @@ resource "aws_s3_bucket" "philoberry-s3" {
     Name    = "philoberry-img-${var.service_type}"
     Service = "philoberry-${var.service_type}"
   }
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 // 버킷을 해제해주는 풀어주는 작업(퍼블릭 액세스 제한)

@@ -38,3 +38,6 @@ variable "publicly_accessible" {
 variable "express_sg" {
 
 }
+variable "bastion_sg" {
+
+}

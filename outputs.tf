@@ -1,3 +1,3 @@
 output "ssh_security" {
-  value = aws_security_group.allow_ssh.id
+  value = aws_security_group.allow_ssh_rds.id
 }

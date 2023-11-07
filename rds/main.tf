@@ -14,6 +14,14 @@ resource "aws_security_group" "rds_sg" {
     security_groups = [var.express_sg]
   }
 
+  ingress {
+    description = "temporary_rds_ingress"
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = [var.bastion_sg]
+  } //temporary rds_enter
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -60,9 +68,9 @@ resource "aws_db_instance" "rds" {
   port                   = 3306                                //데이터베이스 포트
   skip_final_snapshot    = true
 
-  lifecycle {
-    prevent_destroy = true
-  }
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
   tags = {
     Name    = "philoberry-rds-db-${var.service_type}"
     Service = "philoberry-${var.service_type}"

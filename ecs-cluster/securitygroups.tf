@@ -12,15 +12,15 @@ resource "aws_security_group_rule" "cluster-egress" {
   protocol          = "-1"
   cidr_blocks       = ["0.0.0.0/0"]
 }
-resource "aws_security_group_rule" "cluster-allow-ssh" {
-  count                    = var.enable_ssh ? 1 : 0
-  security_group_id        = aws_security_group.ecs-cluster-sg.id
-  type                     = "ingress"
-  from_port                = 22
-  to_port                  = 22
-  protocol                 = "tcp"
-  source_security_group_id = var.ssh_sg
-}
+# resource "aws_security_group_rule" "cluster-allow-ssh" {
+#   count                    = var.enable_ssh ? 1 : 0
+#   security_group_id        = aws_security_group.ecs-cluster-sg.id
+#   type                     = "ingress"
+#   from_port                = 22
+#   to_port                  = 22
+#   protocol                 = "tcp"
+#   source_security_group_id = var.ssh_sg
+# }
 
 
 resource "aws_security_group" "ecs_task" {
@@ -50,10 +50,10 @@ resource "aws_security_group" "express_sg" {
   name   = "express-sg"
 
   ingress {
-    from_port       = var.express_port # Express 애플리케이션의 포트
+    from_port       = var.express_port # Express 애플리케이션의 포트 8000번
     to_port         = var.express_port
     protocol        = "tcp"
-    security_groups = [var.alb_sg]
+    security_groups = [var.alb_sg] // alb의 securitygroup (80 ,443 포트)
   }
 
   egress {
