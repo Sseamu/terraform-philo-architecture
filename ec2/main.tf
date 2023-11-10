@@ -1,6 +1,7 @@
 resource "aws_instance" "main" {
   ami                    = "ami-0e01e66dacaf1454d"
   instance_type          = "t3.micro"
+  key_name               = var.key_name
   subnet_id              = var.vpc_main_subnet
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
 

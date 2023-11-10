@@ -34,3 +34,6 @@ variable "account_id" {
 variable "elb_account_id" {
   type = string
 }
+variable "key_name" {
+  type = string
+}

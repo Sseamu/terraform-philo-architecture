@@ -30,6 +30,7 @@ module "ec2" {
   vpc_main_subnet = module.vpc.public_subnets[0]
   vpc_id          = module.vpc.vpc_id
   service_type    = var.service_type
+  key_name        = var.key_name
 }
 
 #route53

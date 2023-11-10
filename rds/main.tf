@@ -7,7 +7,7 @@ resource "aws_security_group" "rds_sg" {
   vpc_id      = var.vpc_id
   # 인바운드 규칙   
   ingress {
-    description     = "philoberry_rds_ingress"
+    description     = "philoberry_express_ingress"
     from_port       = 3306
     to_port         = 3306
     protocol        = "tcp"
@@ -15,12 +15,12 @@ resource "aws_security_group" "rds_sg" {
   }
 
   ingress {
-    description = "rds_bastionhost_ingress"
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
-    cidr_blocks = [var.bastion_sg] //ec2.moudle.ec2_sg
-  }                                //
+    description     = "rds_bastionhost_ingress"
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = [var.bastion_sg] //ec2.moudle.ec2_sg
+  }                                    //
 
   egress {
     from_port   = 0
