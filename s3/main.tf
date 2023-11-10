@@ -53,7 +53,6 @@ resource "aws_s3_bucket_policy" "bucket-policy" {
         "AWS": ["arn:aws:iam::666897452748:user/hansom-server",
                 "arn:aws:iam::666897452748:root",
                 "arn:aws:iam::666897452748:junhyeok-front",
-                "arn:aws:iam::666897452748:root"
                ]
       }
     },
