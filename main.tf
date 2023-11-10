@@ -25,11 +25,11 @@ module "vpc" {
   service_type = var.service_type
 }
 
-module "ec2" {
-  source          = "./ec2"
-  vpc_main_subnet = module.vpc.private_subnets[0]
-  vpc_id          = module.vpc.vpc_id
-}
+# module "ec2" {
+#   source          = "./ec2"
+#   vpc_main_subnet = module.vpc.private_subnets[0]
+#   vpc_id          = module.vpc.vpc_id
+# }
 
 #route53
 module "route53" {
@@ -73,7 +73,7 @@ module "rds" {
   source              = "./rds"
   service_type        = var.service_type
   vpc_id              = module.vpc.vpc_id
-  private_subnets     = module.vpc.private_subnets
+  private_subnets     = module.vpc.public_subnets
   instance_class      = "db.t3.micro"
   username            = var.username
   rds_password        = var.rds_password

@@ -15,12 +15,19 @@ resource "aws_security_group" "rds_sg" {
   }
 
   ingress {
-    description = "temporary_rds_ingress"
+    description = "rds_bastionhost_ingress"
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
     cidr_blocks = [var.bastion_sg]
-  } //temporary rds_enter
+  } //
+  ingress {
+    description = "temporary dev env ingress public port"
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   egress {
     from_port   = 0
