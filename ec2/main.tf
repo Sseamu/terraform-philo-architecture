@@ -5,7 +5,7 @@ resource "aws_instance" "main" {
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
 
   tags = {
-    Name = "main-instance"
+    Name = "rds-bastion-instance"
   }
 }
 
@@ -26,14 +26,12 @@ resource "aws_security_group" "ec2_sg" {
   }
 }
 
-resource "aws_security_group" "rds_sg" {
-  name   = "rds_sg"
-  vpc_id = var.vpc_id
+resource "aws_eip" "eip" {
+  instance = aws_instance.main.id
+  domain   = "vpc"
 
-  ingress {
-    from_port       = 3306
-    to_port         = 3306
-    protocol        = "tcp"
-    security_groups = [aws_security_group.ec2_sg.id]
+  tags = {
+    Name    = "philoberry-bastion-eip-${var.service_type}"
+    Service = "philoberry-${var.service_type}"
   }
 }

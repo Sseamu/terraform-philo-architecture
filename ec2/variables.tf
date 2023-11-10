@@ -5,3 +5,7 @@ variable "vpc_main_subnet" {
 variable "vpc_id" {
 
 }
+
+variable "service_type" {
+
+}

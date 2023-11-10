@@ -19,15 +19,8 @@ resource "aws_security_group" "rds_sg" {
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks = [var.bastion_sg]
-  } //
-  ingress {
-    description = "temporary dev env ingress public port"
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+    cidr_blocks = [var.bastion_sg] //ec2.moudle.ec2_sg
+  }                                //
 
   egress {
     from_port   = 0
@@ -62,7 +55,7 @@ resource "aws_db_instance" "rds" {
   identifier             = "philoberry-db-${var.service_type}" //DB 인스턴스 식별자
   db_subnet_group_name   = aws_db_subnet_group.subnet-group.id //서브넷 그룹
   engine                 = "mysql"                             //엔진 유형
-  engine_version         = "8.0.31"                            //MySQL 버전
+  engine_version         = "8.0.34"                            //MySQL 버전
   instance_class         = var.instance_class                  //DB 인스턴스 클래스
   username               = var.username                        //마스터 사용자 이름
   password               = var.rds_password                    //마스터 암호
