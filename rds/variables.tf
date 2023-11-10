@@ -38,3 +38,7 @@ variable "publicly_accessible" {
 variable "express_sg" {
 
 }
+
+variable "private_subnets" {
+  type = list(any)
+}

@@ -115,93 +115,93 @@ resource "aws_route_table_association" "to-private" {
 
 
 // endpooint_security_group
-resource "aws_security_group" "endpoint_sg" {
-  name        = "endpoint_sg"
-  description = "Allow inbound traffic on port 443"
-  vpc_id      = aws_vpc.cluster_vpc.id
+# resource "aws_security_group" "endpoint_sg" {
+#   name        = "endpoint_sg"
+#   description = "Allow inbound traffic on port 443"
+#   vpc_id      = aws_vpc.cluster_vpc.id
 
-  ingress {
-    description = "HTTPS"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+#   ingress {
+#     description = "HTTPS"
+#     from_port   = 443
+#     to_port     = 443
+#     protocol    = "tcp"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+#   egress {
+#     from_port   = 0
+#     to_port     = 0
+#     protocol    = "-1"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
 
-  tags = {
-    Name = "endpoint_sg"
-  }
-}
+#   tags = {
+#     Name = "endpoint_sg"
+#   }
+# }
 
 
 
 // vpc end point setting 
 // ssm , ssmmessages, ec2messages, s3 loging
 # SSM
-resource "aws_vpc_endpoint" "ssm_endpoint" {
-  vpc_id             = aws_vpc.cluster_vpc.id
-  service_name       = "com.amazonaws.${var.region}.ssm"
-  vpc_endpoint_type  = "Interface"
-  security_group_ids = [aws_security_group.endpoint_sg.id]
-  subnet_ids         = [aws_subnet.private_subnet[0].id]
+# resource "aws_vpc_endpoint" "ssm_endpoint" {
+#   vpc_id             = aws_vpc.cluster_vpc.id
+#   service_name       = "com.amazonaws.${var.region}.ssm"
+#   vpc_endpoint_type  = "Interface"
+#   security_group_ids = [aws_security_group.endpoint_sg.id]
+#   subnet_ids         = [aws_subnet.private_subnet[0].id]
 
-  tags = {
-    Name = "ssm_endpoint"
-  }
-}
+#   tags = {
+#     Name = "ssm_endpoint"
+#   }
+# }
 
-# SSM Messages
-resource "aws_vpc_endpoint" "ssmmessages_endpoint" {
-  vpc_id             = aws_vpc.cluster_vpc.id
-  service_name       = "com.amazonaws.${var.region}.ssmmessages"
-  vpc_endpoint_type  = "Interface"
-  security_group_ids = [aws_security_group.endpoint_sg.id]
-  subnet_ids         = [aws_subnet.private_subnet[0].id]
+# # SSM Messages
+# resource "aws_vpc_endpoint" "ssmmessages_endpoint" {
+#   vpc_id             = aws_vpc.cluster_vpc.id
+#   service_name       = "com.amazonaws.${var.region}.ssmmessages"
+#   vpc_endpoint_type  = "Interface"
+#   security_group_ids = [aws_security_group.endpoint_sg.id]
+#   subnet_ids         = [aws_subnet.private_subnet[0].id]
 
-  tags = {
-    Name = "ssmmessages_endpoint"
-  }
-}
+#   tags = {
+#     Name = "ssmmessages_endpoint"
+#   }
+# }
 
-# EC2 Messages
-resource "aws_vpc_endpoint" "ec2messages_endpoint" {
-  vpc_id             = aws_vpc.cluster_vpc.id
-  service_name       = "com.amazonaws.${var.region}.ec2messages"
-  vpc_endpoint_type  = "Interface"
-  security_group_ids = [aws_security_group.endpoint_sg.id]
-  subnet_ids         = [aws_subnet.private_subnet[0].id]
+# # EC2 Messages
+# resource "aws_vpc_endpoint" "ec2messages_endpoint" {
+#   vpc_id             = aws_vpc.cluster_vpc.id
+#   service_name       = "com.amazonaws.${var.region}.ec2messages"
+#   vpc_endpoint_type  = "Interface"
+#   security_group_ids = [aws_security_group.endpoint_sg.id]
+#   subnet_ids         = [aws_subnet.private_subnet[0].id]
 
-  tags = {
-    Name = "ec2messages_endpoint"
-  }
-}
+#   tags = {
+#     Name = "ec2messages_endpoint"
+#   }
+# }
 
-# S3
-resource "aws_vpc_endpoint" "s3_endpoint" {
-  vpc_id            = aws_vpc.cluster_vpc.id
-  service_name      = "com.amazonaws.${var.region}.s3"
-  vpc_endpoint_type = "Gateway"
-  tags = {
-    Name = "s3_endpoint"
-  }
-}
+# # S3
+# resource "aws_vpc_endpoint" "s3_endpoint" {
+#   vpc_id            = aws_vpc.cluster_vpc.id
+#   service_name      = "com.amazonaws.${var.region}.s3"
+#   vpc_endpoint_type = "Gateway"
+#   tags = {
+#     Name = "s3_endpoint"
+#   }
+# }
 
-# CloudWatch Logs
-resource "aws_vpc_endpoint" "logs_endpoint" {
-  vpc_id             = aws_vpc.cluster_vpc.id
-  service_name       = "com.amazonaws.${var.region}.logs"
-  vpc_endpoint_type  = "Interface"
-  security_group_ids = [aws_security_group.endpoint_sg.id]
-  subnet_ids         = [aws_subnet.private_subnet[0].id]
+# # CloudWatch Logs
+# resource "aws_vpc_endpoint" "logs_endpoint" {
+#   vpc_id             = aws_vpc.cluster_vpc.id
+#   service_name       = "com.amazonaws.${var.region}.logs"
+#   vpc_endpoint_type  = "Interface"
+#   security_group_ids = [aws_security_group.endpoint_sg.id]
+#   subnet_ids         = [aws_subnet.private_subnet[0].id]
 
-  tags = {
-    Name = "logs_endpoint"
-  }
-}
+#   tags = {
+#     Name = "logs_endpoint"
+#   }
+# }
