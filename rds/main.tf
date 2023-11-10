@@ -14,14 +14,6 @@ resource "aws_security_group" "rds_sg" {
     security_groups = [var.express_sg]
   }
 
-  ingress {
-    description = "temporary_rds_ingress"
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
-    cidr_blocks = [var.bastion_sg]
-  } //temporary rds_enter
-
   egress {
     from_port   = 0
     to_port     = 0

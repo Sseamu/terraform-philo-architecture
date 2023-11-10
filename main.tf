@@ -73,13 +73,12 @@ module "rds" {
   source              = "./rds"
   service_type        = var.service_type
   vpc_id              = module.vpc.vpc_id
-  private_subnets     = module.vpc.public_subnets
+  public_subnets      = module.vpc.public_subnets
   instance_class      = "db.t3.micro"
   username            = var.username
   rds_password        = var.rds_password
   publicly_accessible = true //default false => rds fixedcase true
   express_sg          = module.ecs-cluster.express_sg
-  bastion_sg          = module.ec2.bastion_sg
 }
 
 module "efs" {
