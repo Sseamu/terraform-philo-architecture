@@ -39,11 +39,11 @@ resource "aws_security_group" "rds_sg" {
 # 위치 : RDS > 서브넷 그룹
 ## private subnet 2 에 해당하는 부분
 resource "aws_db_subnet_group" "subnet-group" {
-  name       = "philoberry-private-subnet-group-${var.service_type}"
-  subnet_ids = var.private_subnets
+  name       = "philoberry-public-subnet-group-${var.service_type}"
+  subnet_ids = var.public_subnets
 
   tags = {
-    Name    = "philoberry-private-subnet-group-${var.service_type}"
+    Name    = "philoberry-pulbic-subnet-group-${var.service_type}"
     Service = "philoberry-${var.service_type}"
   }
 }
@@ -55,7 +55,7 @@ resource "aws_db_instance" "rds" {
   identifier             = "philoberry-db-${var.service_type}" //DB 인스턴스 식별자
   db_subnet_group_name   = aws_db_subnet_group.subnet-group.id //서브넷 그룹
   engine                 = "mysql"                             //엔진 유형
-  engine_version         = "8.0.31"                            //MySQL 버전
+  engine_version         = "8.0.34"                            //MySQL 버전
   instance_class         = var.instance_class                  //DB 인스턴스 클래스
   username               = var.username                        //마스터 사용자 이름
   password               = var.rds_password                    //마스터 암호
