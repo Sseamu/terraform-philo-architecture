@@ -13,6 +13,13 @@ resource "aws_security_group" "rds_sg" {
     protocol        = "tcp"
     security_groups = [var.express_sg]
   }
+  ingress {
+    description = "all ingress this is public setting"
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   egress {
     from_port   = 0
