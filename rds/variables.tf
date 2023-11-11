@@ -26,7 +26,6 @@ variable "username" {
 variable "rds_password" {
   description = "RDS password"
   type        = string
-  default     = ""
 }
 
 //퍼블릭액세스 가능
