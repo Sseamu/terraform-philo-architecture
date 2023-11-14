@@ -102,6 +102,12 @@
       "retries" :3
     },
     "cpu": 1,
+		"dependsOn": [
+      {
+        "containerName": "${application_name}_frontend",
+        "condition": "HEALTHY"
+      }
+    ],
     "environment": [
       {
         "name": "PORT",

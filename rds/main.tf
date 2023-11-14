@@ -47,31 +47,39 @@ resource "aws_db_subnet_group" "subnet-group" {
     Service = "philoberry-${var.service_type}"
   }
 }
+// using snap shot 
+data "aws_db_snapshot" "db_snapshot" {
+  most_recent            = true
+  db_instance_identifier = "database-2"
+}
+
 
 #RDS
 # 위치 : RDS > 데이터베이스
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance
 resource "aws_db_instance" "rds" {
-  identifier           = "philoberry-db-${var.service_type}" //DB 인스턴스 식별자
-  db_subnet_group_name = aws_db_subnet_group.subnet-group.id //서브넷 그룹
-  snapshot_identifier  = "philoberrydbschema"
-  engine               = "mysql"            //엔진 유형
-  engine_version       = "8.0.33"           //MySQL 버전
-  instance_class       = var.instance_class //DB 인스턴스 클래스
-  username             = var.username       //마스터 사용자 이름
-  password             = var.rds_password   //마스터 암호
-  # parameter_group_name   = "default.mysql8.0"                  
+  identifier             = "philoberry-db-${var.service_type}" //DB 인스턴스 식별자
+  db_subnet_group_name   = aws_db_subnet_group.subnet-group.id //서브넷 그룹
+  snapshot_identifier    = data.aws_db_snapshot.db_snapshot.id
+  engine                 = "mysql"                        //엔진 유형
+  engine_version         = "8.0.33"                       //MySQL 버전
+  instance_class         = var.instance_class             //DB 인스턴스 클래스
+  username               = var.username                   //마스터 사용자 이름
+  password               = var.rds_password               //마스터 암호                 
   allocated_storage      = 20                             //할당된 스토리지
-  max_allocated_storage  = 100                            //최대 스토리지 임계값
+  max_allocated_storage  = 1000                           //최대 스토리지 임계값
   publicly_accessible    = var.publicly_accessible        //퍼블릭액세스 가능
   vpc_security_group_ids = [aws_security_group.rds_sg.id] //기본 VPC 보안 그룹  
   availability_zone      = "ap-northeast-2a"              //가용 영역
   port                   = 3306
   parameter_group_name   = "default.mysql8.0" //DB 파라미터 그룹                           //데이터베이스 포트
-  skip_final_snapshot    = true
+  skip_final_snapshot    = true               // ==> 나중에는 true
 
   # lifecycle {
-  #   prevent_destroy = true
+  #   prevent_destroy = true,
+  #   ignore_changes = [
+  #   "snapshot_identifier",
+  # ]
   # }
   tags = {
     Name    = "philoberry-rds-db-${var.service_type}"
