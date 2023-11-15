@@ -83,7 +83,6 @@ module "rds" {
   express_sg          = module.ecs-cluster.express_sg
   bastion_sg          = module.ec2.bastion_sg
 }
-
 module "efs" {
   source               = "./efs"
   aws_private_subnets  = module.vpc.private_subnets
@@ -145,18 +144,18 @@ module "ecs-service" {
 #alb
 
 module "alb" {
-  source                   = "./alb"
-  service_type             = var.service_type
-  vpc_id                   = module.vpc.vpc_id
-  alb_name                 = "my-ecs-lb"
-  vpc_subnets              = module.vpc.public_subnets // private_subnets => public_subnets 수정 10.24
-  target_group_arn         = module.ecs-service.target_group_arn
-  express_target_group_arn = module.ecs-service.express_target_group_arn
-  domain                   = var.domain
-  internal                 = false
-  subnet_ids               = module.vpc.public_subnets
-  ecs_sg                   = module.ecs-cluster.cluster_sg
-  certificate_arn          = module.route53.acm_certificate_arn
+  source           = "./alb"
+  service_type     = var.service_type
+  vpc_id           = module.vpc.vpc_id
+  alb_name         = "my-ecs-lb"
+  vpc_subnets      = module.vpc.public_subnets // private_subnets => public_subnets 수정 10.24
+  target_group_arn = module.ecs-service.target_group_arn
+  # express_target_group_arn = module.ecs-service.express_target_group_arn
+  domain          = var.domain
+  internal        = false
+  subnet_ids      = module.vpc.public_subnets
+  ecs_sg          = module.ecs-cluster.cluster_sg
+  certificate_arn = module.route53.acm_certificate_arn
 }
 
 #alb-rule
