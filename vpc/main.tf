@@ -114,7 +114,7 @@ resource "aws_route_table_association" "to-private" {
 }
 
 
-// endpooint_security_group
+# // endpooint_security_group
 # resource "aws_security_group" "endpoint_sg" {
 #   name        = "endpoint_sg"
 #   description = "Allow inbound traffic on port 443"

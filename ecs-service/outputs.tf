@@ -6,6 +6,3 @@ output "ecs_task_role_arn" {
   description = "Value of jenkins ecs task role arn"
 }
 
-output "express_target_group_arn" {
-  value = aws_lb_target_group.express_service.arn
-}

@@ -14,12 +14,12 @@ resource "aws_security_group" "rds_sg" {
     security_groups = [var.express_sg]
   }
   ingress {
-    description = "all ingress this is public setting"
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+    description     = "temporary_rds_ingress"
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = [var.bastion_sg]
+  } //temporary rds_enter
 
   egress {
     from_port   = 0
@@ -33,6 +33,12 @@ resource "aws_security_group" "rds_sg" {
     Service = "philoberry-rds-db-${var.service_type}"
   }
 }
+
+## snapshot 불러오기 
+# data "aws_db_snapshot" "db_snapshot" {
+#   most_recent            = true
+#   db_instance_identifier = "philoberry-db-${var.service_type}" // 이전 DB 인스턴스 식별자
+# }
 
 # 서브넷 그룹 생성 (private subnet 2개)
 # 위치 : RDS > 서브넷 그룹
@@ -58,28 +64,32 @@ resource "aws_db_subnet_group" "private-subnet-group" {
   }
 }
 
-#RDS
-# 위치 : RDS > 데이터베이스
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance
+#RDS 
 resource "aws_db_instance" "rds" {
-  identifier             = "philoberry-db-${var.service_type}"        //DB 인스턴스 식별자
-  db_subnet_group_name   = aws_db_subnet_group.public-subnet-group.id //서브넷 그룹
-  engine                 = "mysql"                                    //엔진 유형
-  engine_version         = "8.0.34"                                   //MySQL 버전
-  instance_class         = var.instance_class                         //DB 인스턴스 클래스
-  username               = var.username                               //마스터 사용자 이름
-  password               = var.rds_password                           //마스터 암호
-  parameter_group_name   = "default.mysql8.0"                         //DB 파라미터 그룹
-  allocated_storage      = 20                                         //할당된 스토리지
-  max_allocated_storage  = 100                                        //최대 스토리지 임계값
-  publicly_accessible    = var.publicly_accessible                    //퍼블릭액세스 가능
-  vpc_security_group_ids = [aws_security_group.rds_sg.id]             //기본 VPC 보안 그룹  
-  availability_zone      = "ap-northeast-2a"                          //가용 영역
-  port                   = 3306                                       //데이터베이스 포트
-  skip_final_snapshot    = true
-
+  identifier           = "philoberry-db-${var.service_type}"         //DB 인스턴스 식별자
+  db_subnet_group_name = aws_db_subnet_group.private-subnet-group.id //서브넷 그룹
+  # snapshot_identifier    = data.aws_db_snapshot.db_snapshot.id         // 최신 스냅샷 식별자
+  engine                 = "mysql"                        //엔진 유형
+  engine_version         = "8.0.34"                       //MySQL 버전
+  instance_class         = var.instance_class             //DB 인스턴스 클래스
+  username               = var.username                   //마스터 사용자 이름
+  password               = var.rds_password               //마스터 암호                 
+  allocated_storage      = 20                             //할당된 스토리지
+  max_allocated_storage  = 1000                           //최대 스토리지 임계값
+  publicly_accessible    = var.publicly_accessible        //퍼블릭액세스 가능
+  vpc_security_group_ids = [aws_security_group.rds_sg.id] //기본 VPC 보안 그룹  
+  availability_zone      = "ap-northeast-2a"              //가용 영역
+  port                   = 3306
+  #backup_retention_period = 30
+  #backup_window           = "01:00-03:00"
+  parameter_group_name = "default.mysql8.0" //DB 파라미터 그룹                           //데이터베이스 포트
+  skip_final_snapshot  = true               // ==> 나중에는 true
+  # final_snapshot_identifier = "philoberry-db-${var.service_type}"
   # lifecycle {
-  #   prevent_destroy = true
+  #   prevent_destroy = true,
+  #   ignore_changes = [
+  #   "snapshot_identifier",
+  # ]
   # }
   tags = {
     Name    = "philoberry-rds-db-${var.service_type}"

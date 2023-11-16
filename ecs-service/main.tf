@@ -92,6 +92,10 @@ resource "aws_ecs_service" "staging" {
   health_check_grace_period_seconds = 300
   //서비스 시작후 일정시간동안 health_check생략
 
+  # placement_constraints {
+  #   type       = "memberOf"
+  #   expression = "attribute:ecs.availability-zone == ap-northeast-2a"
+  # }
 
   depends_on = [
     var.http_listener,

@@ -14,11 +14,20 @@ resource "aws_route53_record" "front" {
 }
 
 resource "aws_route53_record" "cert_validation" {
-  name    = tolist(aws_acm_certificate.acm.domain_validation_options)[0].resource_record_name
-  type    = tolist(aws_acm_certificate.acm.domain_validation_options)[0].resource_record_type
+  for_each = {
+    for dvo in aws_acm_certificate.acm.domain_validation_options : dvo.domain_name => {
+      name  = dvo.resource_record_name
+      type  = dvo.resource_record_type
+      value = dvo.resource_record_value
+    }
+  }
+
+  name    = each.value.name
+  type    = each.value.type
   zone_id = data.aws_route53_zone.front.zone_id
-  records = [tolist(aws_acm_certificate.acm.domain_validation_options)[0].resource_record_value]
+  records = [each.value.value]
   ttl     = 60
+
   lifecycle {
     create_before_destroy = true
   }
