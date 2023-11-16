@@ -150,7 +150,7 @@ module "alb" {
   alb_name         = "my-ecs-lb"
   vpc_subnets      = module.vpc.public_subnets // private_subnets => public_subnets 수정 10.24
   target_group_arn = module.ecs-service.target_group_arn
-  # express_target_group_arn = module.ecs-service.express_target_group_arn
+
   domain          = var.domain
   internal        = false
   subnet_ids      = module.vpc.public_subnets

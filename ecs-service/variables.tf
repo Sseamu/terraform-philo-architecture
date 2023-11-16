@@ -94,7 +94,7 @@ variable "http_listener" {
 
 variable "scaling_max_capacity" {
   type    = number
-  default = 1
+  default = 2
 }
 variable "scaling_min_capacity" {
   type    = number
