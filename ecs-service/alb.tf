@@ -1,7 +1,7 @@
 resource "aws_lb_target_group" "ecs_service" {
   name = "${substr(var.application_name, 0, 10)}-${var.service_type}"
 
-  port                 = 80
+  port                 = 3000 // frontend_container port
   protocol             = "HTTP"
   target_type          = "ip"
   vpc_id               = var.vpc_id
