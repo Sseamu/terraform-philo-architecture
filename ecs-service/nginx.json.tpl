@@ -28,7 +28,7 @@
         "registryArn": "${registry_arn}"
       }
     ],
-    "cpu": 1,
+    "cpu": 256,
     "environment": [
       {
         "name": "PORT",
@@ -36,7 +36,7 @@
       }
     ],
     "mountPoints": [],
-    "memory": 1024,
+    "memory": 512,
     "volumesFrom": []
   }
 ]

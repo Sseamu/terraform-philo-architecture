@@ -1,4 +1,4 @@
-resource "aws_lb_target_group" "ecs_service" {
+resource "aws_lb_target_group" "frontend_service" {
   name = "${substr(var.application_name, 0, 10)}-${var.service_type}"
 
   port                 = 3000 // frontend_container port

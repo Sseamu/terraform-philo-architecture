@@ -79,7 +79,7 @@ resource "aws_ecs_service" "frontend" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.ecs_service.arn
+    target_group_arn = aws_lb_target_group.frontend_service.arn
     container_name   = "${var.application_name}_frontend"
     container_port   = var.frontend_container_port
   }
@@ -147,7 +147,7 @@ resource "aws_ecs_service" "backend" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.ecs_service.arn // targetgroup 맞게 생성해야함.
+    target_group_arn = aws_lb_target_group.frontend_service.arn // targetgroup 맞게 생성해야함.
     container_name   = "${var.application_name}_express"
     container_port   = var.express_container_port
   }
@@ -157,7 +157,7 @@ resource "aws_ecs_service" "backend" {
     var.http_listener,
     var.https_listener,
     aws_iam_role_policy_attachment.ecs_task_execution_role,
-    aws_lb_target_group.ecs_service
+    # aws_lb_target_group.frontend_service
   ]
   service_registries {
     registry_arn = var.backend_discovery_service_arn // cloudmap backend 용으로 하나 생성 

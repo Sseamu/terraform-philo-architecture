@@ -29,10 +29,10 @@ resource "aws_security_group" "frontend_task" {
   dynamic "ingress" {
     for_each = var.front_port
     content {
-      from_port   = ingress.value
-      to_port     = ingress.value
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
+      from_port       = ingress.value
+      to_port         = ingress.value
+      protocol        = "tcp"
+      security_groups = [var.alb_sg]
     }
   }
 
@@ -97,7 +97,7 @@ resource "aws_security_group" "express_sg" {
     from_port       = var.express_port # Express 애플리케이션의 포트 8000번
     to_port         = var.express_port
     protocol        = "tcp"
-    security_groups = [var.alb_sg] // alb의 securitygroup (80 ,443 포트)
+    security_groups = [aws_security_group.frontend_task.id] // alb의 securitygroup (80 ,443 포트)
   }
 
   egress {

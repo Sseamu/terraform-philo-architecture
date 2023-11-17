@@ -1,5 +1,5 @@
 output "target_group_arn" {
-  value = aws_lb_target_group.ecs_service.arn
+  value = aws_lb_target_group.frontend_service.arn
 }
 # output "ecs_task_role_arn" {
 #   value       = aws_iam_role.philoberry_ecs_task.arn
@@ -7,7 +7,7 @@ output "target_group_arn" {
 # }
 
 output "express_target_group_arn" {
-  value = aws_lb_target_group.ecs_service.arn
+  value = aws_lb_target_group.express_service.arn
 }
 
 output "nginx_target_group_arn" {
