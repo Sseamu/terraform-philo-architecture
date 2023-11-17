@@ -5,16 +5,10 @@ variable "service_type" {
   type = string
 }
 
-variable "tpl_path" {
-  type = string
-}
 variable "aws_private_subnets" {
   type = list(any)
 }
 
-variable "aws_availablity_zones_count" {
-  type = number
-}
 
 variable "nginx_container_port" {
   type    = number
@@ -69,7 +63,15 @@ variable "region" {
   default = "ap-northeast-2"
 }
 
-variable "ecs_task_sg" {
+variable "frontend_task_sg" {
+  type = list(string)
+}
+
+variable "backend_task_sg" {
+
+}
+
+variable "nginx_task_sg" {
   type = list(string)
 }
 ## alb vairiables
@@ -113,11 +115,18 @@ variable "jenkins_efs_id" {
 variable "jenkins_efs_access_point_id" {
   type = string
 }
-variable "jenkins_ecs_task_role_arn" {
+
+variable "frontend_discovery_service_arn" {
   type = string
 }
 
-variable "philoberry_discovery_service_arn" {
+variable "backend_discovery_service_arn" {
   type = string
 }
 
+variable "nginx_discovery_service_arn" {
+  type = string
+}
+variable "aws_alb_arn" {
+
+}

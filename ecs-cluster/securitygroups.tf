@@ -23,11 +23,11 @@ resource "aws_security_group_rule" "cluster-egress" {
 # }
 
 
-resource "aws_security_group" "ecs_task" {
+resource "aws_security_group" "frontend_task" {
   vpc_id = var.vpc_id
-  name   = "ecs-task-sg-${var.service_type}"
+  name   = "frontend-task-sg-${var.service_type}"
   dynamic "ingress" {
-    for_each = var.port
+    for_each = var.front_port
     content {
       from_port   = ingress.value
       to_port     = ingress.value
@@ -44,6 +44,50 @@ resource "aws_security_group" "ecs_task" {
   }
 
 }
+
+resource "aws_security_group" "backend_task" {
+  vpc_id = var.vpc_id
+  name   = "backend-task-sg-${var.service_type}"
+  ingress {
+    from_port       = var.backend_port
+    to_port         = var.backend_port
+    protocol        = "tcp"
+    security_groups = [aws_security_group.frontend_task.id]
+
+  }
+
+  egress {
+    from_port   = 0
+    protocol    = "-1"
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+}
+
+resource "aws_security_group" "nginx_task" {
+  vpc_id = var.vpc_id
+  name   = "nginx-task-sg-${var.service_type}"
+
+  dynamic "ingress" {
+    for_each = [80, 443]
+    content {
+      from_port   = ingress.value
+      to_port     = ingress.value
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+
 
 resource "aws_security_group" "express_sg" {
   vpc_id = var.vpc_id

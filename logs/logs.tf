@@ -17,7 +17,7 @@ resource "aws_s3_bucket_public_access_block" "log_storage_public-access" {
 }
 
 resource "aws_cloudwatch_log_group" "service" {
-  name = "awslogs-service-staging-${var.service_type}"
+  name = "awslogs-all-${var.service_type}"
 
   tags = {
     Environment = var.service_type
@@ -36,7 +36,7 @@ data "aws_iam_policy_document" "allow-lb" {
     actions = ["s3:PutObject"]
 
     resources = [
-      "arn:aws:s3:::${aws_s3_bucket.log_storage.bucket}/frontend-alb/AWSLogs/${var.account_id}/*"
+      "arn:aws:s3:::${aws_s3_bucket.log_storage.bucket}/awslogs-all-${var.service_type}/AWSLogs/${var.account_id}/*"
     ]
 
     condition {
@@ -57,7 +57,7 @@ data "aws_iam_policy_document" "allow-lb" {
     actions = ["s3:PutObject"]
 
     resources = [
-      "arn:aws:s3:::${aws_s3_bucket.log_storage.bucket}/frontend-alb/AWSLogs/${var.account_id}/*"
+      "arn:aws:s3:::${aws_s3_bucket.log_storage.bucket}/awslogs-all-${var.service_type}/AWSLogs/${var.account_id}/*"
     ]
 
     condition {
@@ -78,7 +78,7 @@ data "aws_iam_policy_document" "allow-lb" {
     actions = ["s3:PutObject"]
 
     resources = [
-      "arn:aws:s3:::${aws_s3_bucket.log_storage.bucket}/frontend-alb/AWSLogs/${var.account_id}/*"
+      "arn:aws:s3:::${aws_s3_bucket.log_storage.bucket}/awslogs-all-${var.service_type}/AWSLogs/${var.account_id}/*"
     ]
 
     condition {

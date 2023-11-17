@@ -68,9 +68,14 @@ variable "log_retention_days" {
   default     = 1
 }
 
-variable "port" {
+variable "front_port" {
   type    = list(number)
-  default = [80, 3000, 8000]
+  default = [80, 3000]
+}
+
+variable "backend_port" {
+  type    = number
+  default = 8000
 }
 
 variable "express_port" {

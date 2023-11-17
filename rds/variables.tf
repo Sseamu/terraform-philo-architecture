@@ -41,3 +41,7 @@ variable "express_sg" {
 variable "private_subnets" {
   type = list(any)
 }
+
+variable "bastion_sg" {
+
+}

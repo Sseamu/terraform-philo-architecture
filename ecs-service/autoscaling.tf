@@ -1,41 +1,41 @@
-# autoscaling.tf
-
-resource "aws_appautoscaling_target" "ecs_target" {
+resource "aws_appautoscaling_target" "target" {
   max_capacity       = var.scaling_max_capacity
   min_capacity       = var.scaling_min_capacity
-  resource_id        = "service/${element(split("/", var.cluster_arn), 1)}/${aws_ecs_service.staging.name}"
+  resource_id        = "service/${var.cluster_arn}/${aws_ecs_service.frontend.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
 }
 
-resource "aws_appautoscaling_policy" "ecs_policy_memory" {
-  name               = "memory-autoscaling"
+resource "aws_appautoscaling_policy" "scale_up" {
+  name               = "scale-up"
+  service_namespace  = aws_appautoscaling_target.target.service_namespace
+  scalable_dimension = aws_appautoscaling_target.target.scalable_dimension
+  resource_id        = aws_appautoscaling_target.target.resource_id
   policy_type        = "TargetTrackingScaling"
-  resource_id        = aws_appautoscaling_target.ecs_target.resource_id
-  scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension
-  service_namespace  = aws_appautoscaling_target.ecs_target.service_namespace
 
   target_tracking_scaling_policy_configuration {
-    predefined_metric_specification {
-      predefined_metric_type = "ECSServiceAverageMemoryUtilization"
-    }
-
-    target_value = var.cpu_or_memory_limit
-  }
-}
-
-resource "aws_appautoscaling_policy" "ecs_policy_cpu" {
-  name               = "cpu-autoscaling"
-  policy_type        = "TargetTrackingScaling"
-  resource_id        = aws_appautoscaling_target.ecs_target.resource_id
-  scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension
-  service_namespace  = aws_appautoscaling_target.ecs_target.service_namespace
-
-  target_tracking_scaling_policy_configuration {
+    target_value       = 75.0
+    scale_in_cooldown  = 300
+    scale_out_cooldown = 300
     predefined_metric_specification {
       predefined_metric_type = "ECSServiceAverageCPUUtilization"
     }
+  }
+}
 
-    target_value = 60
+resource "aws_appautoscaling_policy" "scale_down" {
+  name               = "scale-down"
+  service_namespace  = aws_appautoscaling_target.target.service_namespace
+  scalable_dimension = aws_appautoscaling_target.target.scalable_dimension
+  resource_id        = aws_appautoscaling_target.target.resource_id
+  policy_type        = "TargetTrackingScaling"
+
+  target_tracking_scaling_policy_configuration {
+    target_value       = 25.0
+    scale_in_cooldown  = 300
+    scale_out_cooldown = 300
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+    }
   }
 }

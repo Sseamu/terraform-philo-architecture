@@ -2,7 +2,7 @@
 
 locals {
   ecs_task_inline_policy = {
-    jenkins-ecs = {
+    philoberry-ecs = {
       actions = [
         "ecs:RegisterTaskDefinition",
         "ecs:DescribeTaskDefinition",
@@ -17,7 +17,7 @@ locals {
         "*"
       ]
     }
-    jenkins-iam = {
+    philoberry-iam = {
       actions = [
         "iam:PassRole",
         "iam:GetRole"
@@ -26,8 +26,68 @@ locals {
         "*"
       ]
     }
+    philoberry-cloudmap = {
+      actions = [
+        "servicediscovery:*"
+      ]
+      resources = [
+        "*"
+      ]
+    }
   }
 }
+
+
+resource "aws_iam_role" "philoberry_ecs_task" {
+  name = "philoberry_ecs_task"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  dynamic "inline_policy" {
+    for_each = local.ecs_task_inline_policy
+
+    content {
+      name = inline_policy.key
+
+      policy = jsonencode({
+        Version = "2012-10-17"
+        Statement = [
+          {
+            Action   = inline_policy.value.actions
+            Effect   = "Allow"
+            Resource = inline_policy.value.resources
+          }
+        ]
+      })
+    }
+  }
+
+  tags = {
+    Name = "philoberry ecs task role"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+
+
+
+
+
+
 // ecs-service의 main.tf에 있는 내용과 동일한 내용 
 // 작업방식만 다른거임 => 상황에 따라서 적합한 코드 사용하는게 유리
 
@@ -63,47 +123,3 @@ locals {
 #     create_before_destroy = true
 #   }
 # }
-
-resource "aws_iam_role" "jenkins_ecs_task" {
-  name = "jenkins_ecs_task"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "ecs-tasks.amazonaws.com"
-        }
-      }
-    ]
-  })
-
-  dynamic "inline_policy" {
-    for_each = local.ecs_task_inline_policy
-
-    content {
-      name = inline_policy.key
-
-      policy = jsonencode({
-        Version = "2012-10-17"
-        Statement = [
-          {
-            Action   = inline_policy.value.actions
-            Effect   = "Allow"
-            Resource = inline_policy.value.resources
-          }
-        ]
-      })
-    }
-  }
-
-  tags = {
-    Name = "Jenkins ECS Task Role"
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
