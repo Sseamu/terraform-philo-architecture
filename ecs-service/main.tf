@@ -192,8 +192,8 @@ resource "aws_ecs_task_definition" "nginx" {
   network_mode             = "awsvpc"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.philoberry_ecs_task.arn
-  cpu                      = 1024
-  memory                   = 2048
+  cpu                      = 256
+  memory                   = 512
   requires_compatibilities = ["FARGATE"]
   container_definitions    = data.template_file.nginx.rendered
 
