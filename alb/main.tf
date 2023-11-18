@@ -86,12 +86,13 @@ resource "aws_lb_listener_rule" "nginx" {
 
   action {
     type             = "forward"
-    target_group_arn = var.target_group_arn //aws_lb_target_group.nginx-service.arn
+    target_group_arn = var.nginx_target_group_arn //aws_lb_target_group.frontend-service.arn
   }
 
   condition {
-    host_header {
-      values = ["www.philoberry.com"]
+    path_pattern {
+      values = ["/static/*"]
     }
-  }
+  } // static css js 정적페이지
+
 }

@@ -11,7 +11,7 @@ resource "aws_security_group" "rds_sg" {
     from_port       = 3306
     to_port         = 3306
     protocol        = "tcp"
-    security_groups = [var.express_sg]
+    security_groups = var.backend_task_sg
   }
   ingress {
     description     = "temporary_rds_ingress"

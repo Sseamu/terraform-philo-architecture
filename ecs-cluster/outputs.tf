@@ -21,6 +21,6 @@ output "nginx_task_sg" {
   value = [aws_security_group.nginx_task.id]
 }
 
-output "express_sg" {
-  value = aws_security_group.express_sg.id
-}
+# output "express_sg" {
+#   value = aws_security_group.express_sg.id
+# }

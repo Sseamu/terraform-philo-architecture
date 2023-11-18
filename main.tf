@@ -81,7 +81,7 @@ module "rds" {
   username            = var.username
   rds_password        = var.rds_password
   publicly_accessible = false //default false => rds fixedcase true
-  express_sg          = module.ecs-cluster.express_sg
+  backend_task_sg     = module.ecs-cluster.backend_task_sg
   bastion_sg          = module.ec2.bastion_sg
 }
 module "efs" {

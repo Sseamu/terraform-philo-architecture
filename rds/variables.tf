@@ -34,7 +34,7 @@ variable "publicly_accessible" {
 }
 
 
-variable "express_sg" {
+variable "backend_task_sg" {
 
 }
 

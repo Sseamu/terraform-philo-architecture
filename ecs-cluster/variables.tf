@@ -70,7 +70,7 @@ variable "log_retention_days" {
 
 variable "front_port" {
   type    = list(number)
-  default = [80, 3000]
+  default = [3000]
 }
 
 variable "backend_port" {

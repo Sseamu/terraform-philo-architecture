@@ -141,13 +141,13 @@ resource "aws_ecs_service" "backend" {
   launch_type          = "FARGATE"
 
   network_configuration {
-    security_groups  = var.frontend_task_sg // frontend => baceknd inbound 규칙 인거같은데
+    security_groups  = var.backend_task_sg
     subnets          = var.aws_private_subnets
     assign_public_ip = false //직접적으로 액세스 거부 
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.frontend_service.arn // targetgroup 맞게 생성해야함.
+    target_group_arn = aws_lb_target_group.express_service.arn // targetgroup 맞게 생성해야함.
     container_name   = "${var.application_name}_express"
     container_port   = var.express_container_port
   }
