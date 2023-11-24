@@ -12,3 +12,10 @@ variable "service_type" {
 variable "bucket" {
   type = string
 }
+variable "private_subnets" {
+
+}
+
+# variable "aws_endpoint_sg" {
+
+# }

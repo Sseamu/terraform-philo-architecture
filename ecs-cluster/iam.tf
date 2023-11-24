@@ -78,45 +78,45 @@ resource "aws_iam_instance_profile" "cluster-ec2-role" {
   role = aws_iam_role.cluster-ec2-role.name
 }
 
-resource "aws_iam_role_policy" "cluster-ec2-role" {
-  name = "cluster-ec2-role-policy"
-  role = aws_iam_role.cluster-ec2-role.id
+# resource "aws_iam_role_policy" "cluster-ec2-role" {
+#   name = "cluster-ec2-role-policy"
+#   role = aws_iam_role.cluster-ec2-role.id
 
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-              "ecs:CreateCluster",
-              "ecs:DeregisterContainerInstance",
-              "ecs:DiscoverPollEndpoint",
-              "ecs:Poll",
-              "ecs:RegisterContainerInstance",
-              "ecs:StartTelemetrySession",
-              "ecs:Submit*",
-              "ecs:StartTask",
-              "ecr:GetAuthorizationToken",
-              "ecr:BatchCheckLayerAvailability",
-              "ecr:GetDownloadUrlForLayer",
-              "ecr:BatchGetImage",
-              "logs:CreateLogStream",
-              "logs:PutLogEvents"
-            ],
-            "Resource": "*"
-        },
-        {
-          "Effect": "Allow",
-          "Action": [
-              "logs:*"
-          ],
-          "Resource": [
-              "arn:aws:logs:${var.aws_region}:${var.aws_account_id}:log-group:${var.log_group}:*"
-          ]
-        }
-    ]
-}
-EOF
+#   policy = <<EOF
+# {
+#     "Version": "2012-10-17",
+#     "Statement": [
+#         {
+#             "Effect": "Allow",
+#             "Action": [
+#               "ecs:CreateCluster",
+#               "ecs:DeregisterContainerInstance",
+#               "ecs:DiscoverPollEndpoint",
+#               "ecs:Poll",
+#               "ecs:RegisterContainerInstance",
+#               "ecs:StartTelemetrySession",
+#               "ecs:Submit*",
+#               "ecs:StartTask",
+#               "ecr:GetAuthorizationToken",
+#               "ecr:BatchCheckLayerAvailability",
+#               "ecr:GetDownloadUrlForLayer",
+#               "ecr:BatchGetImage",
+#               "logs:CreateLogStream",
+#               "logs:PutLogEvents"
+#             ],
+#             "Resource": "*"
+#         },
+#         {
+#           "Effect": "Allow",
+#           "Action": [
+#               "logs:*"
+#           ],
+#           "Resource": [
+#               "arn:aws:logs:${var.aws_region}:${var.aws_account_id}:log-group:${var.log_group}:*"
+#           ]
+#         }
+#     ]
+# }
+# EOF
 
-}
+# }

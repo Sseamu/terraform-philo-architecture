@@ -58,7 +58,7 @@ resource "aws_lb_listener_rule" "express_api_listener" {
 
   condition {
     path_pattern {
-      values = ["/api/*"]
+      values = ["/express/*"]
     }
   }
 }
@@ -86,7 +86,7 @@ resource "aws_lb_listener_rule" "nginx" {
 
   action {
     type             = "forward"
-    target_group_arn = var.nginx_target_group_arn //aws_lb_target_group.frontend-service.arn
+    target_group_arn = var.nginx_target_group_arn //aws_lb_target_group.nginx-service.arn
   }
 
   condition {

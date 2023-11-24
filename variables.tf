@@ -23,10 +23,6 @@ variable "domain" {
 }
 
 
-variable "tpl_path" {
-  type = string
-}
-
 variable "account_id" {
   type = string
 }

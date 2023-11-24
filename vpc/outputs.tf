@@ -16,3 +16,7 @@ output "aws_availability_zone_available" {
   value = max(0, length(data.aws_availability_zones.available.names) - 2)
 } // 임시 빌드중 task 개수 줄이기위해
 
+
+output "aws_endpoint_sg" {
+  value = aws_security_group.endpoint_sg.id
+}

@@ -1,7 +1,7 @@
-variable "log_group" {
-  description = "The name of the CloudWatch log group"
-  type        = string
-}
+# variable "log_group" {
+#   description = "The name of the CloudWatch log group"
+#   type        = string
+# }
 
 variable "cluster_name" {
 
@@ -62,11 +62,11 @@ variable "ssh_key_name" {
 }
 
 
-variable "log_retention_days" {
-  description = "Number of days to retain log events"
-  type        = number
-  default     = 1
-}
+# variable "log_retention_days" {
+#   description = "Number of days to retain log events"
+#   type        = number
+#   default     = 1
+# }
 
 variable "front_port" {
   type    = list(number)

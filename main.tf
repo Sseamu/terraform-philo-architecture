@@ -63,11 +63,12 @@ module "logs" {
 #S3 
 
 # module "s3" {
-#   source       = "./s3"
-#   service_type = var.service_type
-#   vpc_id       = module.vpc.vpc_id
-#   bucket       = "philoberry-s3-${var.service_type}"
-
+#   source          = "./s3"
+#   service_type    = var.service_type
+#   vpc_id          = module.vpc.vpc_id
+#   bucket          = "philoberry-s3-${var.service_type}"
+#   private_subnets = module.vpc.private_subnets
+#   # aws_endpoint_sg = module.vpc.aws_endpoint_sg
 # }
 
 # rds
@@ -99,13 +100,13 @@ data "aws_caller_identity" "current" {
 
 
 module "ecs-cluster" {
-  source         = "./ecs-cluster"
-  vpc_id         = module.vpc.vpc_id
-  service_type   = var.service_type
-  cluster_name   = "philoberry-ecs-cluster"
-  vpc_subnets    = module.vpc.private_subnets
-  ssh_key_name   = var.key_pair_name
-  log_group      = "my-log-group"
+  source       = "./ecs-cluster"
+  vpc_id       = module.vpc.vpc_id
+  service_type = var.service_type
+  cluster_name = "philoberry-ecs-cluster"
+  vpc_subnets  = module.vpc.private_subnets
+  ssh_key_name = var.key_pair_name
+  # log_group      = "my-log-group"
   aws_account_id = data.aws_caller_identity.current.account_id
   aws_region     = "ap-northeast-2"
   alb_sg         = module.alb.alb_sg_id

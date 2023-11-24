@@ -17,6 +17,15 @@ locals {
         "*"
       ]
     }
+    # philoberry-secretmanager = {
+    #   actions = [
+    #     "secretsmanager:GetSecretValue",
+    #     "secretsmanager:DescribeSecret"
+    #   ]
+    #   resource = [
+    #     "arn"
+    #   ]
+    # }
     philoberry-iam = {
       actions = [
         "iam:PassRole",
@@ -32,6 +41,17 @@ locals {
       ]
       resources = [
         "*"
+      ]
+    }
+    philoberry-s3 = {
+      actions = [
+        "s3:PutObject",
+        "s3:PutObjectAcl",
+        "s3:GetObject",
+        "s3:DeleteObject"
+      ]
+      resources = [
+        "arn:aws:s3:::philoberry-s3-dev/*" // 사용하려는 버킷 이름으로 변경하세요
       ]
     }
   }

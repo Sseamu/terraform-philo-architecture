@@ -43,15 +43,15 @@ data "aws_db_snapshot" "db_snapshot" {
 # 서브넷 그룹 생성 (private subnet 2개)
 # 위치 : RDS > 서브넷 그룹
 ## public subnet 2 에 해당하는 부분
-resource "aws_db_subnet_group" "public-subnet-group" {
-  name       = "philoberry-public-subnet-group-${var.service_type}"
-  subnet_ids = var.public_subnets
+# resource "aws_db_subnet_group" "public-subnet-group" {
+#   name       = "philoberry-public-subnet-group-${var.service_type}"
+#   subnet_ids = var.public_subnets
 
-  tags = {
-    Name    = "philoberry-pulbic-subnet-group-${var.service_type}"
-    Service = "philoberry-${var.service_type}"
-  }
-}
+#   tags = {
+#     Name    = "philoberry-pulbic-subnet-group-${var.service_type}"
+#     Service = "philoberry-${var.service_type}"
+#   }
+# }
 
 ## private subnet 2 에 해당하는 부분
 resource "aws_db_subnet_group" "private-subnet-group" {

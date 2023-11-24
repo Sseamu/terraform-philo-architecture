@@ -24,12 +24,6 @@
       "retries" :3
     },
     "cpu": 1,
-    "environment": [
-      {
-        "name": "PORT",
-        "value": "8000"
-      }
-    ],
     "mountPoints": [],
     "memory": 2048,
     "volumesFrom": []

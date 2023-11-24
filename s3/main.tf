@@ -1,4 +1,3 @@
-#s3 bucket
 resource "aws_s3_bucket" "philoberry-s3" {
   bucket = var.bucket //버킷이름
   tags = {
@@ -6,11 +5,10 @@ resource "aws_s3_bucket" "philoberry-s3" {
     Service = "philoberry-${var.service_type}"
   }
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }
 
-// 버킷을 해제해주는 풀어주는 작업(퍼블릭 액세스 제한)
 resource "aws_s3_bucket_public_access_block" "public-access" {
   bucket = aws_s3_bucket.philoberry-s3.id
 
@@ -23,11 +21,10 @@ resource "aws_s3_bucket_public_access_block" "public-access" {
 resource "aws_s3_bucket_versioning" "s3_versioning" {
   bucket = aws_s3_bucket.philoberry-s3.id
   versioning_configuration {
-    status = "Enabled"
+    status = "Suspended" //deafult Enabled
   }
 }
 
-# 버킷 정책(acl)
 resource "aws_s3_bucket_policy" "bucket-policy" {
   bucket = aws_s3_bucket.philoberry-s3.id
 
@@ -35,7 +32,7 @@ resource "aws_s3_bucket_policy" "bucket-policy" {
     aws_s3_bucket_public_access_block.public-access
   ]
 
-  policy = <<POLICY
+  policy = <<-POLICY
 {
   "Id": "Policy1694490590860",
   "Version": "2012-10-17",
@@ -52,7 +49,8 @@ resource "aws_s3_bucket_policy" "bucket-policy" {
       "Principal": {
         "AWS": ["arn:aws:iam::666897452748:user/hansom-server",
                 "arn:aws:iam::666897452748:root",
-                "arn:aws:iam::666897452748:junhyeok-front",
+                "arn:aws:iam::666897452748:user/junhyeok-front",
+                "arn:aws:iam::666897452748:role/philoberry_ecs_task"
                ]
       }
     },
@@ -64,7 +62,8 @@ resource "aws_s3_bucket_policy" "bucket-policy" {
       "Principal": {
         "AWS": ["arn:aws:iam::666897452748:user/hansom-server",
                 "arn:aws:iam::666897452748:root",
-                "arn:aws:iam::666897452748:junhyeok-front"
+                "arn:aws:iam::666897452748:user/junhyeok-front",
+                "arn:aws:iam::666897452748:role/philoberry_ecs_task"
                ]
       }
     },
@@ -82,36 +81,37 @@ resource "aws_s3_bucket_policy" "bucket-policy" {
 POLICY
 }
 
-
-//s3 Cors 세팅(임시로 모든 호스트연결)
 resource "aws_s3_bucket_cors_configuration" "philoberry-s3" {
   bucket = aws_s3_bucket.philoberry-s3.id
+
   cors_rule {
+    allowed_headers = ["*"] // 모든 헤더 허용
     allowed_methods = ["GET", "PUT", "POST"]
-    allowed_origins = ["https://philoberry.com"]
-    expose_headers  = ["*"]
+    allowed_origins = ["https://philoberry.com", "https://www.philoberry.com"]
+    expose_headers  = ["ETag"]
     max_age_seconds = 3000
   }
-
 }
+
+
 //정적 웹 호스팅
-resource "aws_s3_bucket_website_configuration" "philoberry-s3" {
-  bucket = aws_s3_bucket.philoberry-s3.id
+# resource "aws_s3_bucket_website_configuration" "philoberry-s3" {
+#   bucket = aws_s3_bucket.philoberry-s3.id
 
-  index_document {
-    suffix = "index.html"
-  }
+#   index_document {
+#     suffix = "index.html"
+#   }
 
-  error_document {
-    key = "error.html"
-  }
+#   error_document {
+#     key = "error.html"
+#   }
 
-  routing_rule {
-    condition {
-      key_prefix_equals = "docs/"
-    }
-    redirect {
-      replace_key_prefix_with = "documents/"
-    }
-  }
-}
+#   routing_rule {
+#     condition {
+#       key_prefix_equals = "docs/"
+#     }
+#     redirect {
+#       replace_key_prefix_with = "documents/"
+#     }
+#   }
+# }

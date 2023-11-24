@@ -38,7 +38,7 @@ resource "aws_subnet" "private_subnet" {
   availability_zone = element(data.aws_availability_zones.available.names, count.index)
 
   tags = {
-    name = "ecs-private-subnet-${var.service_type}"
+    Name = "ecs-private-subnet-${var.service_type}"
   }
 }
 
@@ -76,6 +76,7 @@ resource "aws_nat_gateway" "nat_gateway" {
 resource "aws_route_table" "private_route" {
   count  = var.az_count
   vpc_id = aws_vpc.cluster_vpc.id
+  # depends_on = [aws_vpc_endpoint.s3_endpoint]
 
   route {
     cidr_block     = "0.0.0.0/0"
@@ -113,6 +114,66 @@ resource "aws_route_table_association" "to-private" {
   route_table_id = element(aws_route_table.private_route.*.id, count.index)
 }
 
+## ecr end_point_sg
+resource "aws_security_group" "endpoint_sg" {
+  name        = "endpoint_sg"
+  description = "Allow inbound traffic on port 443"
+  vpc_id      = aws_vpc.cluster_vpc.id
+
+  ingress {
+    description = "HTTPS"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "endpoint_sg"
+  }
+}
+
+
+## ECR API Endpoint
+resource "aws_vpc_endpoint" "ecr_api" {
+  vpc_id            = aws_vpc.cluster_vpc.id
+  service_name      = "com.amazonaws.${var.region}.ecr.api"
+  vpc_endpoint_type = "Interface"
+
+  subnet_ids         = [for s in aws_subnet.private_subnet : s.id]
+  security_group_ids = [aws_security_group.endpoint_sg.id]
+
+  private_dns_enabled = true
+
+  tags = {
+    Name = "ecr_api_endpoint"
+  }
+}
+
+## ECR DKR Endpoint
+resource "aws_vpc_endpoint" "ecr_dkr" {
+  vpc_id            = aws_vpc.cluster_vpc.id
+  service_name      = "com.amazonaws.${var.region}.ecr.dkr"
+  vpc_endpoint_type = "Interface"
+
+  subnet_ids         = [for s in aws_subnet.private_subnet : s.id]
+  security_group_ids = [aws_security_group.endpoint_sg.id]
+
+  private_dns_enabled = true
+
+  tags = {
+    Name = "ecr_dkr_endpoint"
+  }
+}
+
+
 
 # // endpooint_security_group
 # resource "aws_security_group" "endpoint_sg" {
@@ -137,6 +198,19 @@ resource "aws_route_table_association" "to-private" {
 
 #   tags = {
 #     Name = "endpoint_sg"
+#   }
+# }
+
+## cloud watch logs endpoint  for s3 log + lambda
+# resource "aws_vpc_endpoint" "logs_endpoint" {
+#   vpc_id             = aws_vpc.cluster_vpc.id
+#   service_name       = "com.amazonaws.${var.region}.logs"
+#   vpc_endpoint_type  = "Interface"
+#   subnet_ids         = aws_subnet.private_subnet.*.id
+#   security_group_ids = [aws_security_group.endpoint_sg.id]
+
+#   tags = {
+#     Name = "logs_endpoint"
 #   }
 # }
 
@@ -182,12 +256,13 @@ resource "aws_route_table_association" "to-private" {
 #     Name = "ec2messages_endpoint"
 #   }
 # }
-
+## AWS VPC Endpoint
 # # S3
 # resource "aws_vpc_endpoint" "s3_endpoint" {
 #   vpc_id            = aws_vpc.cluster_vpc.id
 #   service_name      = "com.amazonaws.${var.region}.s3"
 #   vpc_endpoint_type = "Gateway"
+#   route_table_ids   = aws_route_table.private_route[*].id
 #   tags = {
 #     Name = "s3_endpoint"
 #   }
