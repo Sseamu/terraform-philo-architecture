@@ -22,7 +22,8 @@ resource "aws_ecs_cluster" "cluster" {
   name = var.cluster_name
   setting {
     name  = "containerInsights"
-    value = "enabled"
+    value = "disabled" //default enabled => philoberry-cluster 실시간 로그 수집
+    //이기능을 통해서 cpu memeory 및 task 실시간 수집및 분석이 가능하게됨  그래서 가능하면 enabled
   }
 } // 애플리케이션 모니터링및 통계수집
 

@@ -25,6 +25,32 @@ resource "aws_cloudwatch_log_group" "service" {
   }
 }
 
+resource "aws_cloudwatch_log_metric_filter" "philoberry_error_filter" {
+  name           = "philoberry_error_filter"
+  pattern        = "[ERROR]"
+  log_group_name = aws_cloudwatch_log_group.service.name
+
+  metric_transformation {
+    name      = "EventCount"
+    namespace = "philoberry_contianer_errorlog"
+    value     = "1"
+  }
+}
+## cloudwatch alarm metric this skill is using for reduce live logs
+resource "aws_cloudwatch_metric_alarm" "cpu_alarm" {
+  alarm_name          = "cpu_exceed_alarm"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = "120"
+  statistic           = "Average"
+  threshold           = "70"
+  alarm_description   = "This metric checks cpu utilization"
+  alarm_actions       = [aws_sns_topic.cpu_sns_topic.arn]
+}
+
+
 
 data "aws_iam_policy_document" "allow-lb" {
   statement {

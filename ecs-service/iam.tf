@@ -51,7 +51,8 @@ locals {
         "s3:DeleteObject"
       ]
       resources = [
-        "arn:aws:s3:::philoberry-s3-dev/*" // 사용하려는 버킷 이름으로 변경하세요
+        # "arn:aws:s3:::philoberry-s3-dev/*", // 사용하려는 버킷 이름으로 변경하세요
+        "arn:aws:s3:::philoberry-private/*"
       ]
     }
   }
