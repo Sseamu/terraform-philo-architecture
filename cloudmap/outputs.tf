@@ -8,7 +8,7 @@ output "backend_discovery_service_arn" {
   description = "aws_Service Discovery service arn"
 }
 
-output "nginx_discovery_service_arn" {
-  value       = aws_service_discovery_service.nginx.arn
-  description = "aws_Service Discovery service arn"
-}
+# output "nginx_discovery_service_arn" {
+#   value       = aws_service_discovery_service.nginx.arn
+#   description = "aws_Service Discovery service arn"
+# }

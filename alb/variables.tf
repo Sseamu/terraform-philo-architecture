@@ -52,6 +52,6 @@ variable "express_target_group_arn" {
 
 }
 
-variable "nginx_target_group_arn" {
+# variable "nginx_target_group_arn" {
 
-}
+# }

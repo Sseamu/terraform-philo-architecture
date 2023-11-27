@@ -10,10 +10,10 @@ variable "aws_private_subnets" {
 }
 
 
-variable "nginx_container_port" {
-  type    = number
-  default = 80
-}
+# variable "nginx_container_port" {
+#   type    = number
+#   default = 80
+# }
 
 variable "frontend_container_port" {
   type    = number
@@ -24,10 +24,10 @@ variable "express_container_port" {
   type    = number
   default = 8000
 }
-variable "nginx_host_port" {
-  type    = number
-  default = 0
-}
+# variable "nginx_host_port" {
+#   type    = number
+#   default = 0
+# }
 variable "frontend_host_port" {
   type    = number
   default = 0
@@ -40,9 +40,9 @@ variable "cluster_name" {
 variable "aws_ecr_front_repository" {
   type = string
 }
-variable "aws_ecr_nginx_repository" {
-  type = string
-}
+# variable "aws_ecr_nginx_repository" {
+#   type = string
+# }
 
 variable "aws_ecr_express_repository" {
   type = string
@@ -71,9 +71,9 @@ variable "backend_task_sg" {
 
 }
 
-variable "nginx_task_sg" {
-  type = list(string)
-}
+# variable "nginx_task_sg" {
+#   type = list(string)
+# }
 ## alb vairiables
 
 variable "cluster_arn" {
@@ -124,9 +124,9 @@ variable "backend_discovery_service_arn" {
   type = string
 }
 
-variable "nginx_discovery_service_arn" {
-  type = string
-}
+# variable "nginx_discovery_service_arn" {
+#   type = string
+# }
 variable "aws_alb_arn" {
 
 }

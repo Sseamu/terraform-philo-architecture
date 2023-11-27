@@ -63,27 +63,27 @@ resource "aws_service_discovery_service" "backend" {
 ########## nginx cloud map 
 
 ## backend cloudmap
-resource "aws_service_discovery_service" "nginx" {
-  name        = "nginx"
-  description = "My nginx discovery service"
+# resource "aws_service_discovery_service" "nginx" {
+#   name        = "nginx"
+#   description = "My nginx discovery service"
 
-  dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.philoberry.id
+#   dns_config {
+#     namespace_id = aws_service_discovery_private_dns_namespace.philoberry.id
 
-    dns_records {
-      ttl  = 15
-      type = "A"
-    }
+#     dns_records {
+#       ttl  = 15
+#       type = "A"
+#     }
 
-    routing_policy = "MULTIVALUE"
-  }
+#     routing_policy = "MULTIVALUE"
+#   }
 
-  health_check_custom_config {
-    failure_threshold = 1
-  }
+#   health_check_custom_config {
+#     failure_threshold = 1
+#   }
 
-  tags = {
-    Name = "nginx Cloud Map"
-  }
-}
+#   tags = {
+#     Name = "nginx Cloud Map"
+#   }
+# }
 

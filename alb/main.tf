@@ -80,19 +80,19 @@ resource "aws_lb_listener_rule" "express_route_listener" {
   }
 }
 
-## nginx 리스너
-resource "aws_lb_listener_rule" "nginx" {
-  listener_arn = aws_lb_listener.https_listener.arn
+# ## nginx 리스너
+# resource "aws_lb_listener_rule" "nginx" {
+#   listener_arn = aws_lb_listener.https_listener.arn
 
-  action {
-    type             = "forward"
-    target_group_arn = var.nginx_target_group_arn //aws_lb_target_group.nginx-service.arn
-  }
+#   action {
+#     type             = "forward"
+#     target_group_arn = var.nginx_target_group_arn //aws_lb_target_group.nginx-service.arn
+#   }
 
-  condition {
-    path_pattern {
-      values = ["/static/*"]
-    }
-  } // static css js 정적페이지
+#   condition {
+#     path_pattern {
+#       values = ["/static/*"]
+#     }
+#   } // static css js 정적페이지
 
-}
+# }

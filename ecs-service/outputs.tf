@@ -10,6 +10,6 @@ output "express_target_group_arn" {
   value = aws_lb_target_group.express_service.arn
 }
 
-output "nginx_target_group_arn" {
-  value = aws_lb_target_group.nginx-service.arn
-}
+# output "nginx_target_group_arn" {
+#   value = aws_lb_target_group.nginx-service.arn
+# }
