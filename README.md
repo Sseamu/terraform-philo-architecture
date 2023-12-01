@@ -1,5 +1,6 @@
 # terraform-philo-architecture
-philoberry_ecs-architecture
+## philoberry_ecs-architecture
+![philoberry-ecs-architecture](https://github.com/Sseamu/terraform-philo-architecture/assets/50833458/2a426537-f6b3-4cf2-94b8-e76f429af077)
 
 # 2023.09.06 ~ 09.24 
 - terraform을 이용한 기본 아키텍쳐 alb 동작 및 bastion host로 동작되는 아키텍쳐 구현
