@@ -108,4 +108,6 @@
 - 변화한것에 맞게 ci/cd 업데이트 
 - cloudwatch logstream 필터링 및 줄이기 
 - 정적사이트 공부 및 s3 bucket정책 업데이트(내 terraform 코드에서 작업가능)
-- 
+
+# 2023.12.01 
+- CI/CD 업데이트 및 1차 아키텍쳐 마무리 
