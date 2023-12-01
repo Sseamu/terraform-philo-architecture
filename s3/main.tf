@@ -18,54 +18,43 @@ resource "aws_s3_bucket_public_access_block" "public-access" {
   restrict_public_buckets = true
 }
 
-resource "aws_s3_bucket_versioning" "s3_versioning" {
-  bucket = aws_s3_bucket.philoberry-s3.id
-  versioning_configuration {
-    status = "Suspended" //deafult Enabled
-  }
-}
-
 resource "aws_s3_bucket_policy" "bucket-policy" {
   bucket = aws_s3_bucket.philoberry-s3.id
 
-  depends_on = [
-    aws_s3_bucket_public_access_block.public-access
-  ]
-
   policy = <<-POLICY
 {
-  "Id": "Policy1694490590860",
   "Version": "2012-10-17",
+  "Id": "Policy1694490590860",
   "Statement": [
     {
-      "Sid": "Stmt1694490506867",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": [
+          "arn:aws:iam::666897452748:user/junhyeok-front",
+          "arn:aws:iam::666897452748:root",
+          "arn:aws:iam::666897452748:role/philoberry_ecs_task",
+          "arn:aws:iam::666897452748:user/hansom-server"
+        ]
+      },
       "Action": [
         "s3:GetObject",
         "s3:PutObject",
         "s3:DeleteObject"
       ],
-      "Effect": "Allow",
-      "Resource": ["${aws_s3_bucket.philoberry-s3.arn}/*"],
-      "Principal": {
-        "AWS": ["arn:aws:iam::666897452748:user/hansom-server",
-                "arn:aws:iam::666897452748:root",
-                "arn:aws:iam::666897452748:user/junhyeok-front",
-                "arn:aws:iam::666897452748:role/philoberry_ecs_task"
-               ]
-      }
+      "Resource": ["${aws_s3_bucket.philoberry-s3.arn}/*"]
     },
     {
-      "Sid": "Stmt1694490506867",
-      "Action": ["s3:ListBucket"],
       "Effect": "Allow",
-      "Resource": ["${aws_s3_bucket.philoberry-s3.arn}"],
       "Principal": {
-        "AWS": ["arn:aws:iam::666897452748:user/hansom-server",
-                "arn:aws:iam::666897452748:root",
-                "arn:aws:iam::666897452748:user/junhyeok-front",
-                "arn:aws:iam::666897452748:role/philoberry_ecs_task"
-               ]
-      }
+        "AWS": [
+          "arn:aws:iam::666897452748:user/junhyeok-front",
+          "arn:aws:iam::666897452748:user/hansom-server",
+          "arn:aws:iam::666897452748:role/philoberry_ecs_task",
+          "arn:aws:iam::666897452748:root"
+        ]
+      },
+      "Action": "s3:ListBucket",
+      "Resource": ["${aws_s3_bucket.philoberry-s3.arn}"]
     },
     {
       "Sid": "rds_all_permission",

@@ -62,14 +62,14 @@ module "logs" {
 
 #S3 
 
-# module "s3" {
-#   source          = "./s3"
-#   service_type    = var.service_type
-#   vpc_id          = module.vpc.vpc_id
-#   bucket          = "philoberry-s3-${var.service_type}"
-#   private_subnets = module.vpc.private_subnets
-#   # aws_endpoint_sg = module.vpc.aws_endpoint_sg
-# }
+module "s3" {
+  source          = "./s3"
+  service_type    = var.service_type
+  vpc_id          = module.vpc.vpc_id
+  bucket          = "philoberry-s3-${var.service_type}"
+  private_subnets = module.vpc.private_subnets
+
+}
 
 # rds
 module "rds" {

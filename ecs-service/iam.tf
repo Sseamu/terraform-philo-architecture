@@ -11,7 +11,9 @@ locals {
         "ecs:DeregisterTaskDefinition",
         "ecs:ListClusters",
         "ecs:RunTask",
-        "ecs:StopTask"
+        "ecs:StopTask",
+        "ecs:UpdateService",   // 추가 githubaction ci/cd
+        "ecs:DescribeServices" // 추가  githubaction ci/cd
       ]
       resources = [
         "*"
@@ -52,7 +54,7 @@ locals {
       ]
       resources = [
         # "arn:aws:s3:::philoberry-s3-dev/*", // 사용하려는 버킷 이름으로 변경하세요
-        "arn:aws:s3:::philoberry-private/*"
+        "arn:aws:s3:::philoberry-s3-dev/*"
       ]
     }
   }

@@ -6,7 +6,7 @@ resource "aws_security_group" "alb" {
   dynamic "ingress" {
     for_each = var.port
     content {
-      from_port   = ingress.value
+      from_port   = ingress.value //80 , 443
       to_port     = ingress.value
       protocol    = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
