@@ -12,3 +12,7 @@ variable "front_ecs_service_name" {
 variable "backend_ecs_service_name" {
   type = string
 }
+
+variable "service_type" {
+  type = string
+}

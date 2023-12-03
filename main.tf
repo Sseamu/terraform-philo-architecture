@@ -179,4 +179,5 @@ module "codepipeline" {
   ecs_cluster_name         = module.ecs-cluster.ecs_cluster_name
   front_ecs_service_name   = module.ecs-service.frontend_service_name
   backend_ecs_service_name = module.ecs-service.backend_service_name
+  service_type             = var.service_type
 }

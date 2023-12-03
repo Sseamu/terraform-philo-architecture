@@ -33,3 +33,7 @@ variable "elb_account_id" {
 variable "key_name" {
   type = string
 }
+variable "github_token" {
+  type        = string
+  description = "GitHub OAuth token"
+}

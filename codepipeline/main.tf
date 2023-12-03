@@ -1,9 +1,9 @@
 resource "aws_codepipeline" "frontend_codepipeline" {
-  name     = "philoberry-frontend-pipleline"
+  name     = "philoberry-frontend-pipeline"
   role_arn = aws_iam_role.codepipeline_role.arn
 
   artifact_store {
-    location = aws_s3_bucket.codepipeline_bucket.bucket
+    location = aws_s3_bucket.front_codepipeline_bucket.bucket
     type     = "S3"
   }
 
@@ -13,18 +13,16 @@ resource "aws_codepipeline" "frontend_codepipeline" {
     action {
       name             = "Source"
       category         = "Source"
-      owner            = "ThirdParty"
-      provider         = "GitHub"
+      owner            = "AWS"
+      provider         = "CodeStarSourceConnection"
       version          = "1"
       output_artifacts = ["source_output"]
 
       configuration = {
-        Owner      = "bandicow" //github owner
-        Repo       = "philoberry-project"
-        Branch     = "main"
-        OAuthToken = var.github_token
+        ConnectionArn    = aws_codestarconnections_connection.github.arn
+        FullRepositoryId = "bandicow/philoberry-project" // Owner/Repo 형식으로 설정합니다.
+        BranchName       = "main"
       }
-
     }
   }
 
@@ -45,6 +43,11 @@ resource "aws_codepipeline" "frontend_codepipeline" {
       }
     }
   }
+}
+
+resource "aws_codestarconnections_connection" "github" {
+  provider_type = "GitHub"
+  name          = "github-connection"
 }
 
 
@@ -71,7 +74,7 @@ resource "aws_codepipeline" "backend_codepipeline" {
   role_arn = aws_iam_role.codepipeline_role.arn
 
   artifact_store {
-    location = aws_s3_bucket.codepipeline_bucket.bucket
+    location = aws_s3_bucket.backend_codepipeline_bucket.bucket
     type     = "S3"
   }
 
@@ -81,18 +84,16 @@ resource "aws_codepipeline" "backend_codepipeline" {
     action {
       name             = "Source"
       category         = "Source"
-      owner            = "ThirdParty"
-      provider         = "GitHub"
+      owner            = "AWS"
+      provider         = "CodeStarSourceConnection"
       version          = "1"
       output_artifacts = ["source_output"]
 
       configuration = {
-        Owner      = "bandicow" //github owner
-        Repo       = "philoberry-project"
-        Branch     = "main" // 백엔드 코드 위치에 따라 이를 수정해야 할 수 있습니다.
-        OAuthToken = var.github_token
+        ConnectionArn    = aws_codestarconnections_connection.github.arn
+        FullRepositoryId = "bandicow/philoberry-project" // Owner/Repo 형식으로 설정합니다.
+        BranchName       = "main"
       }
-
     }
   }
 
@@ -115,11 +116,9 @@ resource "aws_codepipeline" "backend_codepipeline" {
   }
 }
 
-
-
 resource "aws_codedeploy_app" "backend_app" {
   compute_platform = "ECS"
-  name             = "philoberry_back_app"
+  name             = "philoberry_backend_app"
 }
 
 resource "aws_codedeploy_deployment_group" "backend_group" {
