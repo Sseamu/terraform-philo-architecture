@@ -13,3 +13,10 @@ output "express_target_group_arn" {
 # output "nginx_target_group_arn" {
 #   value = aws_lb_target_group.nginx-service.arn
 # }
+output "frontend_service_name" {
+  value = aws_ecs_service.frontend.name
+}
+
+output "backend_service_name" {
+  value = aws_ecs_service.backend.name
+}
