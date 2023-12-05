@@ -13,15 +13,17 @@ resource "aws_codepipeline" "frontend_codepipeline" {
     action {
       name             = "Source"
       category         = "Source"
-      owner            = "AWS"
-      provider         = "CodeStarSourceConnection"
+      owner            = "ThirdParty"
+      provider         = "GitHub"
       version          = "1"
       output_artifacts = ["source_output"]
 
       configuration = {
-        ConnectionArn    = aws_codestarconnections_connection.github.arn
-        FullRepositoryId = "bandicow/philoberry-project" // Owner/Repo 형식으로 설정합니다.
-        BranchName       = "main"
+        Owner                = "bandicow"
+        Repo                 = "philoberry-project"
+        Branch               = "main"
+        OAuthToken           = var.github_token
+        PollForSourceChanges = false
       }
     }
   }
@@ -63,11 +65,48 @@ resource "aws_codedeploy_deployment_group" "group" {
 
   deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
 
+  blue_green_deployment_config {
+    deployment_ready_option {
+      action_on_timeout = "CONTINUE_DEPLOYMENT"
+    }
+
+    terminate_blue_instances_on_deployment_success {
+      action                           = "TERMINATE"
+      termination_wait_time_in_minutes = 5
+    }
+  }
+
+  deployment_style {
+    deployment_option = "WITH_TRAFFIC_CONTROL"
+    deployment_type   = "BLUE_GREEN"
+  }
+
   ecs_service {
     cluster_name = var.ecs_cluster_name
     service_name = var.front_ecs_service_name
   }
+
+  load_balancer_info {
+    target_group_pair_info {
+      prod_traffic_route {
+        listener_arns = [var.https_listener_arn] // [aws_lb_listener.example.arn]
+      }
+
+      target_group {
+        name = var.target_group_arn
+      }
+
+      target_group {
+        name = var.green_target_group_arn
+      }
+
+      test_traffic_route {
+        listener_arns = [var.http_listener_arn]
+      }
+    }
+  }
 }
+
 
 resource "aws_codepipeline" "backend_codepipeline" {
   name     = "philoberry-backend-pipleline"
@@ -84,15 +123,17 @@ resource "aws_codepipeline" "backend_codepipeline" {
     action {
       name             = "Source"
       category         = "Source"
-      owner            = "AWS"
-      provider         = "CodeStarSourceConnection"
+      owner            = "ThirdParty"
+      provider         = "GitHub"
       version          = "1"
       output_artifacts = ["source_output"]
 
       configuration = {
-        ConnectionArn    = aws_codestarconnections_connection.github.arn
-        FullRepositoryId = "bandicow/philoberry-project" // Owner/Repo 형식으로 설정합니다.
-        BranchName       = "main"
+        Owner                = "bandicow"
+        Repo                 = "philoberry-project"
+        Branch               = "main"
+        OAuthToken           = var.github_token
+        PollForSourceChanges = false
       }
     }
   }
@@ -128,8 +169,44 @@ resource "aws_codedeploy_deployment_group" "backend_group" {
 
   deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
 
+  blue_green_deployment_config {
+    deployment_ready_option {
+      action_on_timeout = "CONTINUE_DEPLOYMENT"
+    }
+
+    terminate_blue_instances_on_deployment_success {
+      action                           = "TERMINATE"
+      termination_wait_time_in_minutes = 5
+    }
+  }
+
+  deployment_style {
+    deployment_option = "WITH_TRAFFIC_CONTROL"
+    deployment_type   = "BLUE_GREEN"
+  }
+
   ecs_service {
     cluster_name = var.ecs_cluster_name
     service_name = var.backend_ecs_service_name
+  }
+
+  load_balancer_info {
+    target_group_pair_info {
+      prod_traffic_route {
+        listener_arns = [var.https_listener_arn] // [aws_lb_listener.example.arn]
+      }
+
+      target_group {
+        name = var.express_target_group_arn
+      }
+
+      target_group {
+        name = var.green_express_target_group_arn
+      }
+
+      test_traffic_route {
+        listener_arns = [var.http_listener_arn]
+      }
+    }
   }
 }

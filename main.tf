@@ -174,10 +174,16 @@ module "alb-rule" {
 }
 
 module "codepipeline" {
-  source                   = "./codepipeline"
-  github_token             = var.github_token
-  ecs_cluster_name         = module.ecs-cluster.ecs_cluster_name
-  front_ecs_service_name   = module.ecs-service.frontend_service_name
-  backend_ecs_service_name = module.ecs-service.backend_service_name
-  service_type             = var.service_type
+  source                         = "./codepipeline"
+  github_token                   = var.github_token
+  ecs_cluster_name               = module.ecs-cluster.ecs_cluster_name
+  front_ecs_service_name         = module.ecs-service.frontend_service_name
+  backend_ecs_service_name       = module.ecs-service.backend_service_name
+  service_type                   = var.service_type
+  https_listener_arn             = module.alb.https_listener_arn
+  http_listener_arn              = module.alb.http_listener_arn
+  target_group_arn               = module.ecs-service.target_group_arn
+  express_target_group_arn       = module.ecs-service.express_target_group_arn
+  green_express_target_group_arn = module.ecs-service.green_express_target_group_arn
+  green_target_group_arn         = module.ecs-service.green_target_group_arn
 }

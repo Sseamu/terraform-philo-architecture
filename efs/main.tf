@@ -11,9 +11,11 @@ resource "aws_efs_file_system" "philberryt-efs" {
 
 resource "aws_efs_mount_target" "philoberry" {
 
-  for_each       = { for id in var.aws_private_subnets : id => id }
+  # for_each       = { for id in var.aws_private_subnets : id => id }
+  # subnet_id      = each.key # or each.value, they are the same in this case. 문자열속성
+  count          = length(var.aws_private_subnets)
   file_system_id = aws_efs_file_system.philberryt-efs.id
-  subnet_id      = each.key # or each.value, they are the same in this case. 문자열속성
+  subnet_id      = var.aws_private_subnets[count.index]
   security_groups = [
     var.philoberry_efs_sg_id
   ]
