@@ -23,7 +23,7 @@
       "timeout" :5,
       "retries" :3
     },
-    "cpu": 2,
+    "cpu": 1,
     "environment": [
       {
         "name": "PORT",
@@ -34,7 +34,7 @@
       "sourceVolume": "philoberry_home",
       "containerPath": "/jenkins_philoberry_home"
     }],
-    "memory": 4096,
+    "memory": 3072,
     "volumesFrom": []
   }
 ]

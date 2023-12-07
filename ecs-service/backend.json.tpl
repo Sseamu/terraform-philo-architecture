@@ -25,7 +25,7 @@
     },
     "cpu": 1,
     "mountPoints": [],
-    "memory": 2048,
+    "memory": 1024,
     "volumesFrom": []
   }
 ]
