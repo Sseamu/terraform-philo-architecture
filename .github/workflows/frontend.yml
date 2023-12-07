@@ -2,13 +2,13 @@ name: Update Philoberry frontend
 
 on:
   push:
-    branches: ["main"] 
+    branches: [ "main" ]
 
 env:
   AWS_REGION: ap-northeast-2
   ECS_SERVICE: frontend-service-dev
   ECS_CLUSTER: philoberry-ecs-cluster
-  ECS_TD: .github/workflows/frontend.json.tpl
+  ECS_TD: ./frontend.json.tpl
   CONTAINER_NAME: philoberry-repository_frontend
   GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
   GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
@@ -19,22 +19,14 @@ env:
   DATABASE_URL: ${{ secrets.DATABASE_URL }}
   NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
   NEXT_PUBLIC_URL: ${{ secrets.NEXT_PUBLIC_URL }}
-  S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
-  S3_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_ACCESS_KEY }}
-  NEXT_PUBLIC_SERVER_URL: ${{ secrets.NEXT_PUBLIC_SERVER_URL }}
-  # 추가된 환경 변수
-  application_name: philoberry-repository
-  aws_front_repository: philoberry_front/service_dev
-  tag: latest
-  region: ap-northeast-2
-  service_type: dev
-  frontend_container_port: 3000
 
 jobs:
   update_service:
     runs-on: ubuntu-latest
-    environment: Configure dev
+    environment: 
+      name: Configure dev 
     name: Update ECS Service
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -51,15 +43,12 @@ jobs:
           echo "DATABASE_URL=${DATABASE_URL}" >> .env
           echo "NEXTAUTH_URL=${NEXTAUTH_URL}" >> .env
           echo "NEXT_PUBLIC_URL=${NEXT_PUBLIC_URL}" >> .env
-          echo "S3_ACCESS_KEY=${S3_ACCESS_KEY}" >> .env
-          echo "S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}" >> .env
-          echo "NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}" >> .env
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.S3_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.S3_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
@@ -69,37 +58,22 @@ jobs:
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
-          ECR_REGISTRY_URL: ${{ secrets.ECR_REGISTRY_URL }}
+          ECR_REGISTRY_URL: ${{ secrets.ECR_REGISTRY_FRONTEND_URL }}
           ECR_REPOSITORY_NAME: "philoberry_front/service_dev"
-          IMAGE_TAG: latest
+          IMAGE_TAG: latest 
         run: |
-          docker build -t ${ECR_REGISTRY_URL}/${ECR_REPOSITORY_NAME}:${IMAGE_TAG} -f client/Dockerfile.next client 
+          docker build -t ${ECR_REGISTRY_URL}/${ECR_REPOSITORY_NAME}:${IMAGE_TAG} . 
           docker push ${ECR_REGISTRY_URL}/${ECR_REPOSITORY_NAME}:${IMAGE_TAG}
           echo "::set-output name=image::${ECR_REGISTRY_URL}/${ECR_REPOSITORY_NAME}:${IMAGE_TAG}"
-
-      - name: Prepare task definition
+          
+      - name: Create frontimagedefinitions.json
         run: |
-          envsubst < ${ECS_TD} > front-task-definition.json
-        env:
-          ECS_TD: ${{ env.ECS_TD }}
-          application_name: ${{ env.application_name }}
-          aws_front_repository: ${{ env.aws_front_repository }}
-          tag: ${{ env.tag }}
-          region: ${{ env.region }}
-          service_type: ${{ env.service_type }}
-          frontend_container_port: ${{ env.frontend_container_port }}
-
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: front-task-definition.json
-          container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ steps.build-image.outputs.image }}
-
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: front-task-definition.json
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
+          echo '[{"name":"'${{ env.CONTAINER_NAME }}'","imageUri":"'${{ steps.build-image.outputs.image }}'"}]' > frontimagedefinitions.json
+        
+      - name: Commit and push frontimagedefinitions.json
+        run: |
+          git config --global user.name 'bandicow'
+          git config --global user.email 'kjh45388117@gmail.com'
+          git add frontimagedefinitions.json
+          git commit -m "Update frontimagedefinitions.json"
+          git push

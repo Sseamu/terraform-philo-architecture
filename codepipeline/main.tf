@@ -35,13 +35,14 @@ resource "aws_codepipeline" "frontend_codepipeline" {
       name            = "Deploy"
       category        = "Deploy"
       owner           = "AWS"
-      provider        = "CodeDeployToECS"
+      provider        = "ECS"
       input_artifacts = ["source_output"]
       version         = "1"
 
       configuration = {
-        ApplicationName     = aws_codedeploy_app.philoberry_app.name
-        DeploymentGroupName = aws_codedeploy_deployment_group.group.deployment_group_name
+        ClusterName = "philoberry-ecs-cluster"
+        ServiceName = var.front_ecs_service_name
+        FileName    = "frontimagedefinitions.json"
       }
     }
   }
@@ -59,10 +60,9 @@ resource "aws_codedeploy_app" "philoberry_app" {
 }
 
 resource "aws_codedeploy_deployment_group" "group" {
-  app_name              = aws_codedeploy_app.philoberry_app.name
-  deployment_group_name = "philoberry-deployment-group"
-  service_role_arn      = aws_iam_role.codepipeline_role.arn
-
+  app_name               = aws_codedeploy_app.philoberry_app.name
+  deployment_group_name  = "philoberry-deployment-group"
+  service_role_arn       = aws_iam_role.codepipeline_role.arn
   deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
 
   blue_green_deployment_config {
@@ -145,13 +145,14 @@ resource "aws_codepipeline" "backend_codepipeline" {
       name            = "Deploy"
       category        = "Deploy"
       owner           = "AWS"
-      provider        = "CodeDeployToECS"
+      provider        = "ECS"
       input_artifacts = ["source_output"]
       version         = "1"
 
       configuration = {
-        ApplicationName     = aws_codedeploy_app.backend_app.name
-        DeploymentGroupName = aws_codedeploy_deployment_group.backend_group.deployment_group_name
+        ClusterName = "philoberry-ecs-cluster"
+        ServiceName = var.backend_ecs_service_name
+        FileName    = "backendimagedefinitions.json"
       }
     }
   }
