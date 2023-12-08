@@ -99,8 +99,7 @@ resource "aws_codebuild_project" "frontend" {
   }
 
   source {
-    type      = "GITHUB"
-    location  = "https://github.com/bandicow/philoberry-project.git"
+    type      = "CODEPIPELINE"
     buildspec = "front-buildspec.yml"
   }
 
@@ -259,8 +258,7 @@ resource "aws_codebuild_project" "backend" {
   }
 
   source {
-    type      = "GITHUB"
-    location  = "https://github.com/bandicow/philoberry-project.git"
+    type      = "CODEPIPELINE"
     buildspec = "backend-buildspec.yml"
   }
 

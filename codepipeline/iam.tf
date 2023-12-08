@@ -6,7 +6,7 @@ resource "aws_iam_role" "codepipeline_role" {
       {
         Action = "sts:AssumeRole",
         Principal = {
-          Service = ["codedeploy.amazonaws.com", "codepipeline.amazonaws.com"]
+          Service = ["codedeploy.amazonaws.com", "codepipeline.amazonaws.com", "codebuild.amazonaws.com"]
         },
         Effect = "Allow",
       },
