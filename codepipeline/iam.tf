@@ -14,14 +14,14 @@ resource "aws_iam_role" "codepipeline_role" {
   })
 }
 
-resource "aws_iam_policy" "ecs_describe_services_policy" {
-  name        = "ECSDescribeServicesPolicy"
-  description = "Allows to describe ECS services"
+resource "aws_iam_policy" "codepipeline_permissions" {
+  name        = "CodePipelinePermissions"
+  description = "Permissions for CodePipeline"
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
       {
-        Action   = "ecs:DescribeServices",
+        Action   = ["ecs:DescribeServices", "codebuild:StartBuild", "codebuild:BatchGetBuilds", "logs:CreateLogStream", "logs:CreateLogGroup"],
         Effect   = "Allow",
         Resource = "*"
       }
@@ -29,12 +29,50 @@ resource "aws_iam_policy" "ecs_describe_services_policy" {
   })
 }
 
-
-resource "aws_iam_role_policy_attachment" "ecs_describe_services_policy_attachment" {
+resource "aws_iam_role_policy_attachment" "codepipeline_permissions_attach" {
   role       = aws_iam_role.codepipeline_role.name
-  policy_arn = aws_iam_policy.ecs_describe_services_policy.arn
+  policy_arn = aws_iam_policy.codepipeline_permissions.arn
 }
 
+resource "aws_iam_policy" "logs_createloggroup_policy" {
+  name        = "LogsCreateLogGroupPolicy"
+  description = "Allows to create CloudWatch Logs log groups"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action   = "logs:CreateLogGroup",
+        Effect   = "Allow",
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "codepipeline_role_createloggroup_attach" {
+  role       = aws_iam_role.codepipeline_role.name
+  policy_arn = aws_iam_policy.logs_createloggroup_policy.arn
+}
+
+resource "aws_iam_policy" "codedeploy_full_access_policy" {
+  name        = "CodeDeployFullAccessPolicy"
+  description = "Provides full access to CodeDeploy"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action   = "codedeploy:*",
+        Effect   = "Allow",
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "codepipeline_role_codedeploy_full_access_attach" {
+  role       = aws_iam_role.codepipeline_role.name
+  policy_arn = aws_iam_policy.codedeploy_full_access_policy.arn
+}
 
 resource "aws_iam_policy" "codepipeline_s3_access" {
   name        = "CodePipelineS3Access"
