@@ -29,34 +29,85 @@ resource "aws_codepipeline" "frontend_codepipeline" {
   }
 
   stage {
+    name = "Build"
+
+    action {
+      name             = "Build"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      input_artifacts  = ["source_output"]
+      output_artifacts = ["build_output"]
+      version          = "1"
+
+      configuration = {
+        ProjectName = aws_codebuild_project.frontend.name // 여기에 AWS CodeBuild 프로젝트 이름을 입력해주세요.
+      }
+    }
+  }
+  stage {
     name = "Deploy"
 
     action {
       name            = "Deploy"
       category        = "Deploy"
       owner           = "AWS"
-      provider        = "ECS"
-      input_artifacts = ["source_output"]
+      provider        = "CodeDeploy"
+      input_artifacts = ["build_output"]
       version         = "1"
 
       configuration = {
-        ClusterName = "philoberry-ecs-cluster"
-        ServiceName = var.front_ecs_service_name
-        FileName    = "frontimagedefinitions.json"
-      }
+        ApplicationName     = aws_codedeploy_app.philoberry_app.name
+        DeploymentGroupName = aws_codedeploy_deployment_group.group.deployment_group_name
+      } // 여기에 AWS CodeBuild 프로젝트 이름을 입력해주세요.
     }
   }
-}
-
-resource "aws_codestarconnections_connection" "github" {
-  provider_type = "GitHub"
-  name          = "github-connection"
 }
 
 
 resource "aws_codedeploy_app" "philoberry_app" {
   compute_platform = "ECS"
   name             = "philoberry_front_app"
+}
+
+
+resource "aws_codebuild_project" "frontend" {
+  name        = "frontend-project"
+  description = "frontend CodeBuild project"
+
+  service_role = aws_iam_role.codepipeline_role.arn // 여기에 서비스 역할 ARN을 입력해주세요.
+
+  environment {
+    compute_type = "BUILD_GENERAL1_SMALL"
+    image        = "aws/codebuild/standard:4.0"
+    type         = "LINUX_CONTAINER"
+
+    environment_variable {
+      name  = "CONTAINER_NAME"
+      value = var.front_ecs_service_name
+    }
+
+    environment_variable {
+      name  = "REPOSITORY_NAME"
+      value = "philoberry_front/service_${var.service_type}"
+    }
+    environment_variable {
+      name  = "IMAGE_TAG"
+      value = "latest"
+    }
+
+  }
+
+  source {
+    type      = "GITHUB"
+    location  = "https://github.com/bandicow/philoberry-project.git"
+    buildspec = "front-buildspec.yml"
+  }
+
+  artifacts {
+    type = "CODEPIPELINE"
+  }
+
 }
 
 resource "aws_codedeploy_deployment_group" "group" {
@@ -72,7 +123,7 @@ resource "aws_codedeploy_deployment_group" "group" {
 
     terminate_blue_instances_on_deployment_success {
       action                           = "TERMINATE"
-      termination_wait_time_in_minutes = 5
+      termination_wait_time_in_minutes = 3
     }
   }
 
@@ -127,7 +178,6 @@ resource "aws_codepipeline" "backend_codepipeline" {
       provider         = "GitHub"
       version          = "1"
       output_artifacts = ["source_output"]
-
       configuration = {
         Owner                = "bandicow"
         Repo                 = "philoberry-project"
@@ -139,20 +189,37 @@ resource "aws_codepipeline" "backend_codepipeline" {
   }
 
   stage {
+    name = "Build"
+
+    action {
+      name             = "Build"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      input_artifacts  = ["source_output"]
+      output_artifacts = ["build_output"]
+
+      configuration = {
+        ProjectName = aws_codebuild_project.backend.name
+      }
+    }
+  }
+
+  stage {
     name = "Deploy"
 
     action {
       name            = "Deploy"
       category        = "Deploy"
       owner           = "AWS"
-      provider        = "ECS"
-      input_artifacts = ["source_output"]
+      provider        = "CodeDeploy"
+      input_artifacts = ["build_output"]
       version         = "1"
 
       configuration = {
-        ClusterName = "philoberry-ecs-cluster"
-        ServiceName = var.backend_ecs_service_name
-        FileName    = "backendimagedefinitions.json"
+        ApplicationName     = aws_codedeploy_app.backend_app.name
+        DeploymentGroupName = aws_codedeploy_deployment_group.backend_group.deployment_group_name
       }
     }
   }
@@ -162,6 +229,48 @@ resource "aws_codedeploy_app" "backend_app" {
   compute_platform = "ECS"
   name             = "philoberry_backend_app"
 }
+
+resource "aws_codebuild_project" "backend" {
+  name        = "backend-project"
+  description = "backend CodeBuild project"
+
+  service_role = aws_iam_role.codepipeline_role.arn // 여기에 서비스 역할 ARN을 입력해주세요.
+
+  environment {
+    compute_type = "BUILD_GENERAL1_SMALL"
+    image        = "aws/codebuild/standard:4.0"
+    type         = "LINUX_CONTAINER"
+
+    environment_variable {
+      name  = "CONTAINER_NAME"
+      value = var.backend_ecs_service_name
+    }
+
+    environment_variable {
+      name  = "REPOSITORY_NAME"
+      value = "philoberry_express/service_${var.service_type}"
+    }
+
+    environment_variable {
+      name  = "IMAGE_TAG"
+      value = "latest"
+    }
+
+  }
+
+  source {
+    type      = "GITHUB"
+    location  = "https://github.com/bandicow/philoberry-project.git"
+    buildspec = "backend-buildspec.yml"
+  }
+
+  artifacts {
+    type = "CODEPIPELINE"
+  }
+
+}
+
+
 
 resource "aws_codedeploy_deployment_group" "backend_group" {
   app_name              = aws_codedeploy_app.backend_app.name
@@ -177,7 +286,7 @@ resource "aws_codedeploy_deployment_group" "backend_group" {
 
     terminate_blue_instances_on_deployment_success {
       action                           = "TERMINATE"
-      termination_wait_time_in_minutes = 5
+      termination_wait_time_in_minutes = 3
     }
   }
 
