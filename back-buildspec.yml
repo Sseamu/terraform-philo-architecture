@@ -1,10 +1,14 @@
 version: 0.2
 
 phases:
+  install:
+    commands:
+      - cd server
   build:
     commands:
       - echo '[{"name":"'${CONTAINER_NAME}'","imageUri":"'${REPOSITORY_NAME}:${IMAGE_TAG}'"}]' > backendimagedefinitions.json
 
 artifacts:
   files:
+    - appspec.json
     - backendimagedefinitions.json

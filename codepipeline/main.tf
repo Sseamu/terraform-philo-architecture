@@ -100,7 +100,7 @@ resource "aws_codebuild_project" "frontend" {
 
   source {
     type      = "CODEPIPELINE"
-    buildspec = "front-buildspec.yml"
+    buildspec = "client/front-buildspec.yml"
   }
 
   artifacts {
@@ -259,7 +259,7 @@ resource "aws_codebuild_project" "backend" {
 
   source {
     type      = "CODEPIPELINE"
-    buildspec = "back-buildspec.yml"
+    buildspec = "server/back-buildspec.yml"
   }
 
   artifacts {
