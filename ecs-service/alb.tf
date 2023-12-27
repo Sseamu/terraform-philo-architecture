@@ -1,5 +1,5 @@
 resource "aws_lb_target_group" "frontend_service_blue" {
-  name = "${substr(var.application_name, 0, 10)}-${var.service_type}-blue"
+  name = "front-blue"
 
   port                 = 3000 // frontend_container port
   protocol             = "HTTP"
@@ -29,7 +29,7 @@ resource "aws_lb_target_group" "frontend_service_blue" {
 
 
 resource "aws_lb_target_group" "frontend_service_green" {
-  name = "${substr(var.application_name, 0, 10)}-${var.service_type}-green"
+  name = "front-green"
 
   port                 = 3000 // frontend_container port
   protocol             = "HTTP"
@@ -57,7 +57,7 @@ resource "aws_lb_target_group" "frontend_service_green" {
 }
 
 resource "aws_lb_target_group" "express_service_blue" {
-  name = "${substr(var.application_name, 0, 10)}-express-blue"
+  name = "express-blue"
 
   port                 = 8000
   protocol             = "HTTP"
@@ -85,7 +85,7 @@ resource "aws_lb_target_group" "express_service_blue" {
 
 
 resource "aws_lb_target_group" "express_service_green" {
-  name = "${substr(var.application_name, 0, 10)}-express-green"
+  name = "express-green"
 
   port                 = 8000
   protocol             = "HTTP"
@@ -112,7 +112,7 @@ resource "aws_lb_target_group" "express_service_green" {
 }
 
 resource "aws_lb_target_group" "nginx-service" {
-  name = "${substr(var.application_name, 0, 10)}-nginx"
+  name = "nginx"
 
   port        = 80
   protocol    = "HTTP"

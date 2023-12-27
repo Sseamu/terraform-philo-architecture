@@ -43,18 +43,18 @@ resource "aws_ecs_task_definition" "frontend" {
   cpu                      = 2048
   memory                   = 4096
   requires_compatibilities = ["FARGATE"]
-  volume {
-    name = "philoberry_home"
-    efs_volume_configuration {
-      file_system_id     = var.jenkins_efs_id
-      root_directory     = "/"
-      transit_encryption = "ENABLED"
-      authorization_config {
-        access_point_id = var.jenkins_efs_access_point_id
-        iam             = "ENABLED"
-      }
-    }
-  }
+  # volume {
+  #   name = "philoberry_home"
+  #   efs_volume_configuration {
+  #     file_system_id     = var.jenkins_efs_id
+  #     root_directory     = "/"
+  #     transit_encryption = "ENABLED"
+  #     authorization_config {
+  #       access_point_id = var.jenkins_efs_access_point_id
+  #       iam             = "ENABLED"
+  #     }
+  #   }
+  # }
   container_definitions = data.template_file.frontend.rendered
 
 
@@ -64,13 +64,24 @@ resource "aws_ecs_task_definition" "frontend" {
   }
 }
 
+resource "aws_ssm_parameter" "front_task_definition_arn" {
+  name  = "/myapp/frontend_task_definition_arn"
+  type  = "String"
+  value = aws_ecs_task_definition.frontend.arn
+}
+
+
 resource "aws_ecs_service" "frontend" {
   name                 = "frontend-service-${var.service_type}"
   cluster              = var.cluster_arn //이내용을 main에있는 aws_Ecs_service에 모듈로 보내라
   task_definition      = aws_ecs_task_definition.frontend.arn
   desired_count        = var.scaling_min_capacity
   force_new_deployment = true
-  launch_type          = "FARGATE"
+
+  capacity_provider_strategy {
+    capacity_provider = "FARGATE_SPOT"
+    weight            = "1"
+  }
 
   network_configuration {
     security_groups  = var.frontend_task_sg
@@ -136,13 +147,26 @@ resource "aws_ecs_task_definition" "backend" {
   }
 }
 
+
+resource "aws_ssm_parameter" "backend_task_definition_arn" {
+  name  = "/myapp/backend_task_definition_arn"
+  type  = "String"
+  value = aws_ecs_task_definition.backend.arn
+}
+
+
+
 resource "aws_ecs_service" "backend" {
   name                 = "backend-service-${var.service_type}"
   cluster              = var.cluster_arn //이내용을 main에있는 aws_Ecs_service에 모듈로 보내라
   task_definition      = aws_ecs_task_definition.backend.arn
   desired_count        = var.scaling_min_capacity
   force_new_deployment = true
-  launch_type          = "FARGATE"
+  capacity_provider_strategy {
+    capacity_provider = "FARGATE_SPOT"
+    weight            = "1"
+  }
+
 
   network_configuration {
     security_groups  = var.backend_task_sg

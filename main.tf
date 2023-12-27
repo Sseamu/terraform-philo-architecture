@@ -85,12 +85,12 @@ module "rds" {
   backend_task_sg     = module.ecs-cluster.backend_task_sg
   bastion_sg          = module.ec2.bastion_sg
 }
-module "efs" {
-  source               = "./efs"
-  aws_private_subnets  = module.vpc.private_subnets
-  philoberry_efs_sg_id = module.efs.philoberry_efs_sg
-  vpc_id               = module.vpc.vpc_id
-}
+# module "efs" {
+#   source               = "./efs"
+#   aws_private_subnets  = module.vpc.private_subnets
+#   philoberry_efs_sg_id = module.efs.philoberry_efs_sg
+#   vpc_id               = module.vpc.vpc_id
+# }
 
 
 data "aws_caller_identity" "current" {
@@ -131,11 +131,11 @@ module "ecs-service" {
   frontend_task_sg           = module.ecs-cluster.frontend_task_sg
   backend_task_sg            = module.ecs-cluster.backend_task_sg
   # nginx_task_sg                  = module.ecs-cluster.nginx_task_sg
-  aws_alb_arn                    = module.alb.alb_arn
-  http_listener                  = module.alb.http_listener
-  https_listener                 = module.alb.https_listener
-  jenkins_efs_id                 = module.efs.efs_id
-  jenkins_efs_access_point_id    = module.efs.efs_access_point_id
+  aws_alb_arn    = module.alb.alb_arn
+  http_listener  = module.alb.http_listener
+  https_listener = module.alb.https_listener
+  # jenkins_efs_id                 = module.efs.efs_id
+  # jenkins_efs_access_point_id    = module.efs.efs_access_point_id
   frontend_discovery_service_arn = module.cloudmap.frontend_discovery_service_arn
   backend_discovery_service_arn  = module.cloudmap.backend_discovery_service_arn
   # nginx_discovery_service_arn    = module.cloudmap.nginx_discovery_service_arn
@@ -174,16 +174,20 @@ module "alb-rule" {
 }
 
 module "codepipeline" {
-  source                         = "./codepipeline"
-  github_token                   = var.github_token
-  ecs_cluster_name               = module.ecs-cluster.ecs_cluster_name
-  front_ecs_service_name         = module.ecs-service.frontend_service_name
-  backend_ecs_service_name       = module.ecs-service.backend_service_name
-  service_type                   = var.service_type
-  https_listener_arn             = module.alb.https_listener_arn
-  http_listener_arn              = module.alb.http_listener_arn
-  target_group_arn               = module.ecs-service.target_group_arn
-  express_target_group_arn       = module.ecs-service.express_target_group_arn
-  green_express_target_group_arn = module.ecs-service.green_express_target_group_arn
-  green_target_group_arn         = module.ecs-service.green_target_group_arn
+  source                          = "./codepipeline"
+  github_token                    = var.github_token
+  ecs_cluster_name                = module.ecs-cluster.ecs_cluster_name
+  front_ecs_service_name          = module.ecs-service.frontend_service_name
+  backend_ecs_service_name        = module.ecs-service.backend_service_name
+  service_type                    = var.service_type
+  https_listener_arn              = module.alb.https_listener_arn
+  http_listener_arn               = module.alb.http_listener_arn
+  target_group_arn                = module.ecs-service.target_group_arn
+  express_target_group_arn        = module.ecs-service.express_target_group_arn
+  green_express_target_group_arn  = module.ecs-service.green_express_target_group_arn
+  green_target_group_arn          = module.ecs-service.green_target_group_arn
+  target_group_name               = module.ecs-service.target_group_name
+  green_target_group_name         = module.ecs-service.green_target_group_name
+  express_target_group_name       = module.ecs-service.express_target_group_name
+  green_express_target_group_name = module.ecs-service.green_express_target_group_name
 }

@@ -1,14 +1,15 @@
-version: 0.2
+version: '0.2'
 
 phases:
   install:
     commands:
-      - cd client
+      - 'cd client'
   build:
     commands:
-      - echo '[{"name":"'${CONTAINER_NAME}'","imageUri":"'${REPOSITORY_NAME}:${IMAGE_TAG}'"}]' > frontimagedefinitions.json
+      - 'echo "[{\"name\":\"${CONTAINER_NAME}\",\"imageUri\":\"${REPOSITORY_NAME}:${IMAGE_TAG}\"}]" > frontimagedefinitions.json'
 
 artifacts:
   files:
-		- appspec.json
-    - frontimagedefinitions.json
+    - 'appspec.json'
+    - 'frontimagedefinitions.json'
+  base-directory: 'client'

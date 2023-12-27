@@ -30,10 +30,6 @@
         "value": "3000"
       }
     ],
-    "mountPoints" : [ {
-      "sourceVolume": "philoberry_home",
-      "containerPath": "/jenkins_philoberry_home"
-    }],
     "memory": 3072,
     "volumesFrom": []
   }

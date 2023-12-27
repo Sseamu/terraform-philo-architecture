@@ -21,7 +21,7 @@ resource "aws_codepipeline" "frontend_codepipeline" {
       configuration = {
         Owner                = "bandicow"
         Repo                 = "philoberry-project"
-        Branch               = "main"
+        Branch               = "atomic"
         OAuthToken           = var.github_token
         PollForSourceChanges = false
       }
@@ -143,11 +143,11 @@ resource "aws_codedeploy_deployment_group" "group" {
       }
 
       target_group {
-        name = var.target_group_arn
+        name = var.target_group_name
       }
 
       target_group {
-        name = var.green_target_group_arn
+        name = var.green_target_group_name
       }
 
       test_traffic_route {
@@ -180,7 +180,7 @@ resource "aws_codepipeline" "backend_codepipeline" {
       configuration = {
         Owner                = "bandicow"
         Repo                 = "philoberry-project"
-        Branch               = "main"
+        Branch               = "atomic"
         OAuthToken           = var.github_token
         PollForSourceChanges = false
       }
@@ -305,11 +305,11 @@ resource "aws_codedeploy_deployment_group" "backend_group" {
       }
 
       target_group {
-        name = var.express_target_group_arn
+        name = var.express_target_group_name
       }
 
       target_group {
-        name = var.green_express_target_group_arn
+        name = var.green_express_target_group_name
       }
 
       test_traffic_route {
