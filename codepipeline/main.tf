@@ -21,7 +21,7 @@ resource "aws_codepipeline" "frontend_codepipeline" {
       configuration = {
         Owner                = "bandicow"
         Repo                 = "philoberry-project"
-        Branch               = "atomic"
+        Branch               = "main"
         OAuthToken           = var.github_token
         PollForSourceChanges = false
       }
@@ -52,7 +52,7 @@ resource "aws_codepipeline" "frontend_codepipeline" {
       name            = "Deploy"
       category        = "Deploy"
       owner           = "AWS"
-      provider        = "CodeDeploy"
+      provider        = "ECS (blue/green)"
       input_artifacts = ["build_output"]
       version         = "1"
 
@@ -180,7 +180,7 @@ resource "aws_codepipeline" "backend_codepipeline" {
       configuration = {
         Owner                = "bandicow"
         Repo                 = "philoberry-project"
-        Branch               = "atomic"
+        Branch               = "main"
         OAuthToken           = var.github_token
         PollForSourceChanges = false
       }
@@ -212,7 +212,7 @@ resource "aws_codepipeline" "backend_codepipeline" {
       name            = "Deploy"
       category        = "Deploy"
       owner           = "AWS"
-      provider        = "CodeDeploy"
+      provider        = "ECS (blue/green)"
       input_artifacts = ["build_output"]
       version         = "1"
 

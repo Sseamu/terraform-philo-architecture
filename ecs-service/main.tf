@@ -63,12 +63,12 @@ resource "aws_ecs_task_definition" "frontend" {
     Application = var.application_name
   }
 }
-
-resource "aws_ssm_parameter" "front_task_definition_arn" {
-  name  = "/myapp/frontend_task_definition_arn"
-  type  = "String"
-  value = aws_ecs_task_definition.frontend.arn
-}
+// this is useless
+# resource "aws_ssm_parameter" "front_task_definition_arn" {
+#   name  = "/myapp/frontend_task_definition_arn"
+#   type  = "String"
+#   value = aws_ecs_task_definition.frontend.arn
+# }
 
 
 resource "aws_ecs_service" "frontend" {
@@ -147,12 +147,12 @@ resource "aws_ecs_task_definition" "backend" {
   }
 }
 
-
-resource "aws_ssm_parameter" "backend_task_definition_arn" {
-  name  = "/myapp/backend_task_definition_arn"
-  type  = "String"
-  value = aws_ecs_task_definition.backend.arn
-}
+//aws ssm parameterstore useless
+# resource "aws_ssm_parameter" "backend_task_definition_arn" {
+#   name  = "/myapp/backend_task_definition_arn"
+#   type  = "String"
+#   value = aws_ecs_task_definition.backend.arn
+# }
 
 
 
