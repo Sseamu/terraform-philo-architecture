@@ -33,3 +33,4 @@ resource "aws_route53_record" "cert_validation" {
   }
 }
 //해당 도메인에 접근시  loadbalaner로 이동하도록 a레코드 설정
+

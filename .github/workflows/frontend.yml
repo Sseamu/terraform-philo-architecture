@@ -8,6 +8,7 @@ env:
   AWS_REGION: ap-northeast-2
   ECS_SERVICE: frontend-service-dev
   ECS_CLUSTER: philoberry-ecs-cluster
+<<<<<<< HEAD
   ECS_TD: .github/workflows/frontend.json.tpl
   CONTAINER_NAME: philoberry-repository_frontend
   GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
@@ -29,18 +30,30 @@ env:
   region: ap-northeast-2
   service_type: dev
   frontend_container_port: 3000
+=======
+  ECS_TD: ./frontend.json.tpl
+  CONTAINER_NAME: philoberry-repository_frontend
+>>>>>>> release
 
 jobs:
   update_service:
     runs-on: ubuntu-latest
+<<<<<<< HEAD
     environment: Configure dev
     name: Update ECS Service
+=======
+    environment:
+      name: Configure dev
+    name: Update ECS Service
+
+>>>>>>> release
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Create .env File
         run: |
+<<<<<<< HEAD
           echo "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}" > .env
           echo "GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}" >> .env
           echo "KAKAO_CLIENT_ID=${KAKAO_CLIENT_ID}" >> .env
@@ -54,6 +67,20 @@ jobs:
           echo "S3_ACCESS_KEY=${S3_ACCESS_KEY}" >> .env
           echo "S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}" >> .env
           echo "NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}" >> .env
+=======
+          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" > .env
+           echo "GOOGLE_CLIENT_SECRET=${{secrets.GOOGLE_CLIENT_SECRET}}" >> .env
+           echo "KAKAO_CLIENT_ID=${{secrets.KAKAO_CLIENT_ID}}" >> .env
+           echo "KAKAO_CLIENT_SECRET=${{secrets.KAKAO_CLIENT_SECRET}}" >> .env
+           echo "NEXTAUTH_SECRET=${{secrets.NEXTAUTH_SECRET}}" >> .env
+           echo "S3_BUCKET=${{secrets.S3_BUCKET}}" >> .env
+           echo "AWS_REGION=${{env.AWS_REGION}}" >> .env
+           echo "DATABASE_URL=${{secrets.DATABASE_URL}}" >> .env
+           echo "NEXTAUTH_URL=${{secrets.NEXTAUTH_URL}}" >> .env
+           echo "S3_ACCESS_KEY=${{secrets.S3_ACCESS_KEY}}" >> .env
+           echo "S3_SECRET_ACCESS_KEY=${{secrets.S3_SECRET_ACCESS_KEY}}" >> .env
+           echo "NEXT_PUBLIC_URL=${{secrets.NEXT_PUBLIC_URL}}" >> .env
+>>>>>>> release
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -73,6 +100,7 @@ jobs:
           ECR_REPOSITORY_NAME: "philoberry_front/service_dev"
           IMAGE_TAG: latest
         run: |
+<<<<<<< HEAD
           docker build -t ${ECR_REGISTRY_URL}/${ECR_REPOSITORY_NAME}:${IMAGE_TAG} -f client/Dockerfile.next client 
           docker push ${ECR_REGISTRY_URL}/${ECR_REPOSITORY_NAME}:${IMAGE_TAG}
           echo "::set-output name=image::${ECR_REGISTRY_URL}/${ECR_REPOSITORY_NAME}:${IMAGE_TAG}"
@@ -103,3 +131,9 @@ jobs:
           task-definition: front-task-definition.json
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
+=======
+          docker build -t ${ECR_REGISTRY_URL}/${ECR_REPOSITORY_NAME}:${IMAGE_TAG} -f client/Dockerfile.next .
+          docker push ${ECR_REGISTRY_URL}/${ECR_REPOSITORY_NAME}:${IMAGE_TAG}
+          echo "::set-output name=image::${ECR_REGISTRY_URL}/${ECR_REPOSITORY_NAME}:${IMAGE_TAG}"
+  
+>>>>>>> release

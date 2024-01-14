@@ -24,3 +24,6 @@ output "backend_task_sg" {
 # output "express_sg" {
 #   value = aws_security_group.express_sg.id
 # }
+output "ecs_cluster_name" {
+  value = aws_ecs_cluster.cluster.name
+}

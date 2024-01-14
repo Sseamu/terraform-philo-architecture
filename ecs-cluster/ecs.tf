@@ -31,7 +31,7 @@ resource "aws_ecs_cluster" "cluster" {
 resource "aws_launch_configuration" "cluster" {
   name_prefix          = "ecs-${var.service_type}-launch_config"
   image_id             = data.aws_ami.ecs.id
-  instance_type        = "c5a.xlarge"
+  instance_type        = "c5a.large"
   key_name             = var.ssh_key_name //tfvars 에있음
   iam_instance_profile = aws_iam_instance_profile.cluster-ec2-role.id
   security_groups      = [aws_security_group.ecs-cluster-sg.id]

@@ -27,12 +27,12 @@ resource "aws_security_group" "ec2_sg" {
   }
 }
 
-resource "aws_eip" "eip" {
-  instance = aws_instance.main.id
-  domain   = "vpc"
+# resource "aws_eip" "eip" {
+#   instance = aws_instance.main.id
+#   domain   = "vpc"
 
-  tags = {
-    Name    = "philoberry-bastion-eip-${var.service_type}"
-    Service = "philoberry-${var.service_type}"
-  }
-}
+#   tags = {
+#     Name    = "philoberry-bastion-eip-${var.service_type}"
+#     Service = "philoberry-${var.service_type}"
+#   }
+# }

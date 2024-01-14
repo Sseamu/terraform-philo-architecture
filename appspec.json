@@ -1,0 +1,17 @@
+{
+  "version": 0.2,
+  "Resources": [
+    {
+      "TargetService": {
+        "Type": "AWS::ECS::Service",
+        "Properties": {
+          "TaskDefinition": "TASK_DEFINITION_ARN",
+          "LoadBalancerInfo": {
+            "ContainerName": "philoberry-repository_express",
+            "ContainerPort": 8000
+          }
+        }
+      }
+    }
+  ]
+}
